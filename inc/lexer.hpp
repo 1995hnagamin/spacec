@@ -1,7 +1,6 @@
 enum class TokenType {
   SmallName,
   CapitalName,
-  SpecialName,
   Digit,
   Symbol,
   Eof

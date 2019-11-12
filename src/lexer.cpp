@@ -24,7 +24,6 @@ std::string Token::get_as_name() const {
   switch (token_type) {
     case TokenType::SmallName:
     case TokenType::CapitalName:
-    case TokenType::SpecialName:
       return literal;
     default:
       throw BadGetterException("Not a name");
