@@ -60,7 +60,7 @@ struct char_stream {
     index = 0;
     return true;
   }
-  char get_next_token() {
+  char get_next_char() {
     if (index < cur_line.length()) {
       return cur_line[index++];
     }
@@ -69,9 +69,36 @@ struct char_stream {
     }
     std::getline(ifs, cur_line);
     index = 0;
-    return cur_line[0];
+    return '\n';
   }
   std::ifstream ifs;
   std::string cur_line;
   size_t index;
 };
+
+std::unique_ptr<TokenStream> LexicalAnalysis(std::string const &filename) {
+
+  char_stream stream;
+  if (!stream.open(filename)) {
+    return nullptr;
+  }
+
+  std::vector<Token> tokens;
+  std::string cur_token;
+  while (char c = stream.get_next_char()) {
+    if ('0' <= c && c <= '9') {
+      while ('0' <= c && c <= '9') {
+        cur_token.push_back(c);
+        c = stream.get_next_char();
+      }
+      tokens.emplace_back(TokenType::Digit, cur_token);
+    } else if ('a' <= c && c <= 'z') {
+      while ('a' <= c && c <= 'z') {
+        cur_token.push_back(c);
+        c = stream.get_next_char();
+      }
+      tokens.emplace_back(TokenType::SmallName, cur_token);
+    }
+  }
+  return std::make_unique<TokenStream>(tokens);
+}
