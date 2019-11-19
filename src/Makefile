@@ -8,6 +8,7 @@ INCLUDES = -I../inc
 CXXFLAGS = -std=c++11 \
 	-Wall -Wextra -Wpedantic \
 	$(INCLUDES)
+LDFLAGS = -lc++
 OBJS = spccc.o \
 	lexer.o
 
