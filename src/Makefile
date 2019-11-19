@@ -5,7 +5,7 @@ all: $(TARGET)
 
 
 INCLUDES = -I../inc
-CXXFLAGS = -std=c++11 \
+CXXFLAGS = -std=c++14 \
 	-Wall -Wextra -Wpedantic \
 	$(INCLUDES)
 LDFLAGS = -lc++
