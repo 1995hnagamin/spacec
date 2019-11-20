@@ -29,3 +29,6 @@ class TokenStream {
   private:
     std::vector<Token> stream;
 };
+
+std::vector<Token>
+LexicalAnalysis(std::string const &filename);
