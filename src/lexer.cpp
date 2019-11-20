@@ -99,6 +99,7 @@ LexicalAnalysis(std::string const &filename) {
         c = stream.get_next_char();
       }
       tokens.emplace_back(TokenType::SmallName, cur_token);
+      cur_token = "";
     }
   }
   return tokens;
