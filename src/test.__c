@@ -1,0 +1,7 @@
+DefFn fib(n: i32) -> i32 {
+	If (n < 2)
+		1
+	Else
+		fib(n-1) + fib(n-2)
+	End
+}
