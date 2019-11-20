@@ -76,11 +76,12 @@ struct char_stream {
   size_t index;
 };
 
-std::unique_ptr<TokenStream> LexicalAnalysis(std::string const &filename) {
+std::vector<Token>
+LexicalAnalysis(std::string const &filename) {
 
   char_stream stream;
   if (!stream.open(filename)) {
-    return nullptr;
+    return {};
   }
 
   std::vector<Token> tokens;
@@ -100,5 +101,5 @@ std::unique_ptr<TokenStream> LexicalAnalysis(std::string const &filename) {
       tokens.emplace_back(TokenType::SmallName, cur_token);
     }
   }
-  return std::make_unique<TokenStream>(tokens);
+  return tokens;
 }
