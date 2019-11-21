@@ -109,6 +109,9 @@ LexicalAnalysis(std::string const &filename) {
       }
       tokens.emplace_back(TokenType::SmallName, capital);
     }
+    if (std::string("(){}[]").find(c) != std::string::npos) {
+      tokens.emplace_back(TokenType::Symbol, std::string(1, c));
+    }
   }
   return tokens;
 }
