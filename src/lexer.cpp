@@ -1,3 +1,4 @@
+#include <cctype>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -87,14 +88,14 @@ LexicalAnalysis(std::string const &filename) {
   std::vector<Token> tokens;
   std::string cur_token;
   while (char c = stream.get_next_char()) {
-    if ('0' <= c && c <= '9') {
-      while ('0' <= c && c <= '9') {
+    if (std::isdigit(c)) {
+      while (std::isdigit(c)) {
         cur_token.push_back(c);
         c = stream.get_next_char();
       }
       tokens.emplace_back(TokenType::Digit, cur_token);
-    } else if ('a' <= c && c <= 'z') {
-      while ('a' <= c && c <= 'z') {
+    } else if (std::islower(c)) {
+      while (std::islower(c)) {
         cur_token.push_back(c);
         c = stream.get_next_char();
       }
