@@ -101,6 +101,13 @@ LexicalAnalysis(std::string const &filename) {
         c = stream.get_next_char();
       }
       tokens.emplace_back(TokenType::SmallName, cur_token);
+    } else if (std::isupper(c)) {
+      std::string capital;
+      while (std::isalnum(c)) {
+        capital.push_back(c);
+        c = stream.get_next_char();
+      }
+      tokens.emplace_back(TokenType::SmallName, capital);
     }
   }
   return tokens;
