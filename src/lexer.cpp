@@ -95,7 +95,7 @@ LexicalAnalysis(std::string const &filename) {
       }
       tokens.emplace_back(TokenType::Digit, cur_token);
     } else if (std::islower(c)) {
-      while (std::islower(c)) {
+      while (std::islower(c) || std::isdigit(c) || c == '_') {
         cur_token.push_back(c);
         c = stream.get_next_char();
       }
