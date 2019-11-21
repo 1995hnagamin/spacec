@@ -86,21 +86,21 @@ LexicalAnalysis(std::string const &filename) {
   }
 
   std::vector<Token> tokens;
-  std::string cur_token;
   while (char c = stream.get_next_char()) {
     if (std::isdigit(c)) {
+      std::string cur_token;
       while (std::isdigit(c)) {
         cur_token.push_back(c);
         c = stream.get_next_char();
       }
       tokens.emplace_back(TokenType::Digit, cur_token);
     } else if (std::islower(c)) {
+      std::string cur_token;
       while (std::islower(c) || std::isdigit(c) || c == '_') {
         cur_token.push_back(c);
         c = stream.get_next_char();
       }
       tokens.emplace_back(TokenType::SmallName, cur_token);
-      cur_token = "";
     }
   }
   return tokens;
