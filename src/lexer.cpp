@@ -79,6 +79,7 @@ struct char_stream {
 
 std::vector<Token>
 LexicalAnalysis(std::string const &filename) {
+  auto const syms = static_cast<std::string>("!$%&-=~^|@+:*<>/?.");
 
   char_stream stream;
   if (!stream.open(filename)) {
@@ -108,9 +109,15 @@ LexicalAnalysis(std::string const &filename) {
         c = stream.get_next_char();
       }
       tokens.emplace_back(TokenType::SmallName, capital);
-    }
-    if (std::string("(){}[]").find(c) != std::string::npos) {
+    } else if (std::string("(){}[]`,").find(c) != std::string::npos) {
       tokens.emplace_back(TokenType::Symbol, std::string(1, c));
+    } else if (syms.find(c) != std::string::npos) {
+      std::string tok;
+      while (syms.find(c) != std::string::npos) {
+        tok.push_back(c);
+        c = stream.get_next_char();
+      }
+      tokens.emplace_back(TokenType::Symbol, tok);
     }
   }
   return tokens;
