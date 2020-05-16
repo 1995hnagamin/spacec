@@ -72,6 +72,9 @@ struct char_stream {
     index = 0;
     return '\n';
   }
+  void back() {
+    --index;
+  }
   std::ifstream ifs;
   std::string cur_line;
   size_t index;
@@ -94,6 +97,7 @@ LexicalAnalysis(std::string const &filename) {
         cur_token.push_back(c);
         c = stream.get_next_char();
       }
+      stream.back();
       tokens.emplace_back(TokenType::Digit, cur_token);
     } else if (std::islower(c)) {
       std::string cur_token;
@@ -101,6 +105,7 @@ LexicalAnalysis(std::string const &filename) {
         cur_token.push_back(c);
         c = stream.get_next_char();
       }
+      stream.back();
       tokens.emplace_back(TokenType::SmallName, cur_token);
     } else if (std::isupper(c)) {
       std::string capital;
@@ -108,6 +113,7 @@ LexicalAnalysis(std::string const &filename) {
         capital.push_back(c);
         c = stream.get_next_char();
       }
+      stream.back();
       tokens.emplace_back(TokenType::SmallName, capital);
     } else if (std::string("(){}[]`,").find(c) != std::string::npos) {
       tokens.emplace_back(TokenType::Symbol, std::string(1, c));
@@ -117,6 +123,7 @@ LexicalAnalysis(std::string const &filename) {
         tok.push_back(c);
         c = stream.get_next_char();
       }
+      stream.back();
       tokens.emplace_back(TokenType::Symbol, tok);
     }
   }
