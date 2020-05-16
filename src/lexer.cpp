@@ -82,6 +82,7 @@ struct char_stream {
 
 std::vector<Token>
 LexicalAnalysis(std::string const &filename) {
+  auto const parens = static_cast<std::string>("(){}[]`,");
   auto const syms = static_cast<std::string>("!$%&-=~^|@+:*<>/?.");
 
   char_stream stream;
@@ -115,7 +116,7 @@ LexicalAnalysis(std::string const &filename) {
       }
       stream.back();
       tokens.emplace_back(TokenType::SmallName, capital);
-    } else if (std::string("(){}[]`,").find(c) != std::string::npos) {
+    } else if (parens.find(c) != std::string::npos) {
       tokens.emplace_back(TokenType::Symbol, std::string(1, c));
     } else if (syms.find(c) != std::string::npos) {
       std::string tok;
