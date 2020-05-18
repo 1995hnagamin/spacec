@@ -29,8 +29,10 @@ class Token {
 class TokenStream {
   public:
     TokenStream(std::vector<Token> const & tokens);
+    Token *get();
   private:
     std::vector<Token> stream;
+    size_t idx;
 };
 
 std::vector<Token>

@@ -45,6 +45,10 @@ TokenStream::TokenStream(const std::vector<Token>& tokens):
   stream(tokens)
 {}
 
+Token *
+TokenStream::get() {
+  return &(stream[idx++]);
+}
 
 
 struct char_stream {
