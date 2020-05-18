@@ -1,3 +1,6 @@
+#ifndef LEXER_HPP
+#define LEXER_HPP
+
 enum class TokenType {
   SmallName,
   CapitalName,
@@ -32,3 +35,5 @@ class TokenStream {
 
 std::vector<Token>
 LexicalAnalysis(std::string const &filename);
+
+#endif /* !LEXER_HPP */
