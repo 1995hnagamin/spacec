@@ -86,7 +86,7 @@ struct char_stream {
 
 std::vector<Token>
 LexicalAnalysis(std::string const &filename) {
-  auto const parens = static_cast<std::string>("(){}[]`,");
+  auto const parens = static_cast<std::string>("(){}[]");
   auto const syms = static_cast<std::string>("!$%&-=~^|@+:*<>/?.");
 
   char_stream stream;
