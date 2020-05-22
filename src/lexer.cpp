@@ -50,6 +50,11 @@ TokenStream::get() {
   return &(stream[idx++]);
 }
 
+void
+TokenStream::expect(TokenType type) {
+  auto const tok = get();
+  assert(tok->type() == type);
+}
 
 struct char_stream {
   explicit char_stream() {}
