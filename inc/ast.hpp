@@ -6,7 +6,7 @@ class Ast {
     enum class AK {
       DefFn,
       BinaryExpr,
-      CallExpr
+      CallExpr,
     };
 
   public:
