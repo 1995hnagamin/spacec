@@ -10,7 +10,9 @@ class Ast {
     };
 
   public:
-    Ast(AK k): kind(k) {}
+    Ast(AK k): kind(k) {
+    }
+    virtual ~Ast() = 0;
     AK get_kind() const {
       return kind;
     }
