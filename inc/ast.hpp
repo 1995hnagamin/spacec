@@ -21,10 +21,15 @@ class Ast {
     AK const kind;
 };
 
+class Type;
+
 class DefFnAst : public Ast {
   public:
-    DefFnAst(std::string const &fnname, std::vector<std::string> const &paramlist, std::vector<Type> const &typelist, Ast *fnbody):
-      name(fnname), params(paramlist), ptypes(typelist), body(fnbody)
+    DefFnAst(std::string const &fnname,
+        std::vector<std::string> const &paramlist,
+        std::vector<Type *> const &typelist,
+        Ast *fnbody):
+      Ast(AK::DefFn), name(fnname), params(paramlist), ptypes(typelist), body(fnbody)
     {
     }
     static bool classof(Ast const *a) {
@@ -36,7 +41,7 @@ class DefFnAst : public Ast {
     std::string get_nth_name(size_t n) const {
       return params[n];
     }
-    Ast *get_nth_type(size_t n) const {
+    Type *get_nth_type(size_t n) const {
       return ptypes[n];
     }
     Ast *get_body() {
@@ -47,7 +52,7 @@ class DefFnAst : public Ast {
   private:
     std::string name;
     std::vector<std::string> params;
-    std::vector<Ast *> ptypes;
+    std::vector<Type *> ptypes;
     Ast *body;
 };
 
