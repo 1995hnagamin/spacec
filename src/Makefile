@@ -10,9 +10,20 @@ CXXFLAGS = -std=c++14 \
 	$(INCLUDES)
 LDFLAGS = -lc++
 OBJS = spccc.o \
-	lexer.o
+	ast.o \
+	lexer.o \
+	parser.o \
+	type.o
 
 $(TARGET): $(OBJS)
+
+ast.o: ../inc/ast.hpp
+
+lexer.o: ../inc/lexer.hpp
+
+parser.o: ../inc/ast.hpp ../inc/lexer.hpp ../inc/parser.hpp
+
+spccc.o: ../inc/ast.hpp ../inc/lexer.hpp ../inc/parser.hpp
 
 clean:
 	rm -rf $(TARGET) $(OBJS)
