@@ -50,6 +50,11 @@ TokenStream::get() {
   return &(stream[idx++]);
 }
 
+Token *
+TokenStream::seek() {
+  return &(stream[idx]);
+}
+
 void
 TokenStream::expect(TokenType type) {
   auto const tok = get();

@@ -37,6 +37,7 @@ class TokenStream {
   public:
     TokenStream(std::vector<Token> const & tokens);
     Token *get();
+    Token *seek();
     void expect(TokenType);
     void expect(TokenType, char const *);
   private:
