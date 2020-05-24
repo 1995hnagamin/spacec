@@ -56,6 +56,13 @@ TokenStream::expect(TokenType type) {
   assert(tok->type() == type);
 }
 
+void
+TokenStream::expect(TokenType type, char const *repr) {
+  auto const tok = get();
+  assert(tok->type() == type);
+  assert(tok->representation() == repr);
+}
+
 struct char_stream {
   explicit char_stream() {}
   bool is_valid() {
