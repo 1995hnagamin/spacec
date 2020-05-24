@@ -91,7 +91,6 @@ struct char_stream {
 
 std::vector<Token>
 LexicalAnalysis(std::string const &filename) {
-  auto const parens = static_cast<std::string>("(){}[]");
   auto const syms = static_cast<std::string>("!$%&-=~^|@+:*<>/?.");
 
   char_stream stream;
@@ -101,6 +100,31 @@ LexicalAnalysis(std::string const &filename) {
 
   std::vector<Token> tokens;
   while (char c = stream.get_next_char()) {
+    switch (c) {
+      case '(':
+        tokens.emplace_back(TokenType::LParen, "(");
+        continue;
+      case ')':
+        tokens.emplace_back(TokenType::RParen, ")");
+        continue;
+      case '[':
+        tokens.emplace_back(TokenType::LBracket, "[");
+        continue;
+      case ']':
+        tokens.emplace_back(TokenType::RBracket, "]");
+        continue;
+      case '{':
+        tokens.emplace_back(TokenType::LBrace, "{");
+        continue;
+      case '}':
+        tokens.emplace_back(TokenType::RBrace, "}");
+        continue;
+      case ',':
+        tokens.emplace_back(TokenType::Comma, ",");
+        continue;
+      default:
+        ; // do nothing
+    }
     if (std::isdigit(c)) {
       std::string cur_token;
       while (std::isdigit(c)) {
@@ -125,8 +149,6 @@ LexicalAnalysis(std::string const &filename) {
       }
       stream.back();
       tokens.emplace_back(TokenType::SmallName, capital);
-    } else if (parens.find(c) != std::string::npos) {
-      tokens.emplace_back(TokenType::Symbol, std::string(1, c));
     } else if (syms.find(c) != std::string::npos) {
       std::string tok;
       while (syms.find(c) != std::string::npos) {
