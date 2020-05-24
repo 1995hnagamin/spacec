@@ -1,25 +1,44 @@
+#include <string>
+#include <vector>
+#include "ast.hpp"
 #include "lexer.hpp"
 #include "parser.hpp"
+#include "type.hpp"
 
 Ast *
 Parser::parse_top_level_decl() {
-  Token *tok = tokens.get();
-  if (!tok || tok->get_as_name() != "DefFn") {
-    return nullptr;
-  }
-  tok = tokens.get();
+  tokens.expect(TokenType::CapitalName, "DefFn");
+
+  auto tok = tokens.get();
   auto const name = tok->representation();
-  tokens.get(); // `(`
+
+  tokens.expect(TokenType::LParen);
   std::vector<std::string> params;
-  std::vector<Ast *> types;
-  for (tok = tokens.get(); tok && tok->representation() != ")"; tok = tokens.get()) {
-    params.push_back(tok.get_as_name());
-    tokens.get(); // `:`
-    Ast *ty = parse_type();
-    if (!ty) {
-      return nullptr;
-    }
+  std::vector<Type *> types;
+  tok = tokens.get();
+  while (tok->type() == TokenType::SmallName) {
+    params.push_back(tok->get_as_name());
+    tokens.expect(TokenType::Symbol, ":");
+    Type *ty = parse_type();
     types.push_back(ty);
+    tok = tokens.get();
+    if (tok->type() == TokenType::Comma) {
+      tok = tokens.get();
+    }
   }
-  return new DefFnAst(name, params, types, body);
+  tokens.expect(TokenType::RParen);
+
+  tokens.expect(TokenType::LBrace);
+  if (tokens.seek()->representation() == "Let") {
+
+  }
+  tokens.expect(TokenType::RBrace);
+  // return new DefFnAst(name, params, types, body);
+  return nullptr;
+}
+
+Type *
+Parser::parse_type() {
+  tokens.expect(TokenType::SmallName, "i32");
+  return new IntNType(32);
 }
