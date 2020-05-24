@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
+#include "ast.hpp"
 #include "lexer.hpp"
+#include "parser.hpp"
 
 void show_help() {
   std::cout << "usage: spccc <filename>" << std::endl;
@@ -20,5 +22,7 @@ int main(int argc, char **argv) {
 
   auto const tokens = LexicalAnalysis(argv[1]);
   show_tokens(tokens);
+  Parser parser(tokens);
+  parser.parse_type();
   return 0;
 }
