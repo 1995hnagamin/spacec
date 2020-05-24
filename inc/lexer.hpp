@@ -5,6 +5,13 @@ enum class TokenType {
   SmallName,
   CapitalName,
   Digit,
+  LParen,
+  RParen,
+  LBracket,
+  RBracket,
+  LBrace,
+  RBrace,
+  Comma,
   Symbol,
   Eof
 };
