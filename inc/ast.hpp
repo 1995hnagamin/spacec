@@ -7,6 +7,7 @@ class Ast {
       DefFn,
       BinaryExpr,
       CallExpr,
+      IntegerLiteral,
     };
 
   public:
@@ -99,6 +100,21 @@ class CallExprAst : public Ast {
   private:
     Ast *callee;
     std::vector<Ast *> args;
+};
+
+class IntegerLiteralExpr : public Ast {
+  public:
+    IntegerLiteralExpr(int v): Ast(AK::IntegerLiteral), val(v) {
+    }
+    static bool classof(Ast const *a) {
+      return a->get_kind() == AK::IntegerLiteral;
+    }
+    int get_value() const {
+      return val;
+    }
+
+  private:
+    int val;
 };
 
 #endif /* !AST_HPP */

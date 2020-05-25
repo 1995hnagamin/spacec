@@ -37,6 +37,13 @@ Parser::parse_top_level_decl() {
   return nullptr;
 }
 
+Ast *
+Parser::parse_integer_literal() {
+  auto const tok = tokens.get();
+  assert(tok->type() == TokenType::Digit);
+  return new IntegerLiteralExpr(std::stoi(tok->representation()));
+}
+
 Type *
 Parser::parse_type() {
   tokens.expect(TokenType::SmallName, "i32");
