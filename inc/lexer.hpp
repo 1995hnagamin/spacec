@@ -38,8 +38,8 @@ class TokenStream {
     TokenStream(std::vector<Token> const & tokens);
     Token *get();
     Token *seek();
-    void expect(TokenType);
-    void expect(TokenType, char const *);
+    Token *expect(TokenType);
+    Token *expect(TokenType, char const *);
   private:
     std::vector<Token> stream;
     size_t idx;

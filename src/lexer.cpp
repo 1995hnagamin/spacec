@@ -55,17 +55,19 @@ TokenStream::seek() {
   return &(stream[idx]);
 }
 
-void
+Token *
 TokenStream::expect(TokenType type) {
   auto const tok = get();
   assert(tok->type() == type);
+  return tok;
 }
 
-void
+Token *
 TokenStream::expect(TokenType type, char const *repr) {
   auto const tok = get();
   assert(tok->type() == type);
   assert(tok->representation() == repr);
+  return tok;
 }
 
 struct char_stream {
