@@ -44,6 +44,15 @@ Parser::parse_integer_literal() {
   return new IntegerLiteralExpr(std::stoi(tok->representation()));
 }
 
+Ast *
+Parser::parse_let_stmt() {
+  tokens.expect(TokenType::CapitalName, "Let");
+  auto const nametok = tokens.expect(TokenType::SmallName);
+  tokens.expect(TokenType::Symbol, "=");
+  auto const rhs = parse_integer_literal();
+  return new LetStmt(nametok->representation(), rhs);
+}
+
 Type *
 Parser::parse_type() {
   tokens.expect(TokenType::SmallName, "i32");

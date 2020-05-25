@@ -8,6 +8,7 @@ class Ast {
       BinaryExpr,
       CallExpr,
       IntegerLiteral,
+      LetStmt,
     };
 
   public:
@@ -115,6 +116,24 @@ class IntegerLiteralExpr : public Ast {
 
   private:
     int val;
+};
+
+class LetStmt : public Ast {
+  public:
+    LetStmt(std::string const &n, Ast *r): Ast(AK::LetStmt), name(n), rhs(r) {
+    }
+    static bool classof(Ast const *a) {
+      return a->get_kind() == AK::LetStmt;
+    }
+    std::string get_var_name() const {
+      return name;
+    }
+    Ast *get_init() {
+      return rhs;
+    }
+  private:
+    std::string name;
+    Ast *rhs;
 };
 
 #endif /* !AST_HPP */

@@ -6,6 +6,7 @@ class Parser {
     Parser(TokenStream const &stream): tokens(stream) {}
     Ast *parse_top_level_decl();
     Ast *parse_integer_literal();
+    Ast *parse_let_stmt();
     Type *parse_type();
 
   private:
