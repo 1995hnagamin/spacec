@@ -8,9 +8,27 @@ void show_help() {
   std::cout << "usage: spccc <filename>" << std::endl;
 }
 
+char const *
+string_of_tokentype(TokenType t) {
+  switch (t) {
+    case TokenType::SmallName:
+      return "sma";
+    case TokenType::CapitalName:
+      return "cap";
+    case TokenType::Digit:
+      return "dig";
+    case TokenType::Symbol:
+      return "sym";
+    default:
+      return "!#$";
+  }
+}
+
 void show_tokens(std::vector<Token> const &tokens) {
   for (auto &&token : tokens) {
-    std::cout << token.representation() << std::endl;
+    std::cout << string_of_tokentype(token.type()) << ": "
+      << token.representation()
+      << std::endl;
   }
 }
 
