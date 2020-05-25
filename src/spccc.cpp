@@ -23,6 +23,6 @@ int main(int argc, char **argv) {
   auto const tokens = LexicalAnalysis(argv[1]);
   show_tokens(tokens);
   Parser parser(tokens);
-  parser.parse_type();
+  parser.parse_let_stmt();
   return 0;
 }
