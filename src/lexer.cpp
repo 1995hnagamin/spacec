@@ -162,7 +162,7 @@ LexicalAnalysis(std::string const &filename) {
         c = stream.get_next_char();
       }
       stream.back();
-      tokens.emplace_back(TokenType::SmallName, capital);
+      tokens.emplace_back(TokenType::CapitalName, capital);
     } else if (syms.find(c) != std::string::npos) {
       std::string tok;
       while (syms.find(c) != std::string::npos) {
