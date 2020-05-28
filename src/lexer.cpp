@@ -72,35 +72,31 @@ TokenStream::expect(TokenType type, char const *repr) {
 
 struct char_stream {
   explicit char_stream() {}
-  bool is_valid() {
-    return index <= cur_line.length();
-  }
   bool open(std::string const &filename) {
     ifs.open(filename);
     if (!ifs) {
       return false;
     }
-    std::getline(ifs, cur_line);
-    index = 0;
     return true;
   }
   char get_next_char() {
-    if (index < cur_line.length()) {
-      return cur_line[index++];
-    }
-    if (!ifs) {
+    if (ifs.eof()) {
       return '\0';
     }
-    std::getline(ifs, cur_line);
-    index = 0;
-    return '\n';
+    if (bk) {
+      bk = false;
+      return cur;
+    }
+    ifs >> std::noskipws >> cur;
+    return cur;
   }
   void back() {
-    --index;
+    assert(!bk);
+    bk = true;
   }
   std::ifstream ifs;
-  std::string cur_line;
-  size_t index;
+  bool bk;
+  char cur;
 };
 
 std::vector<Token>
