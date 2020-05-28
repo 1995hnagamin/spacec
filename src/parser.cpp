@@ -45,6 +45,25 @@ Parser::parse_integer_literal() {
 }
 
 Ast *
+Parser::parse_if_stmt() {
+  tokens.expect(TokenType::CapitalName, "If");
+  tokens.expect(TokenType::LParen);
+  auto const cond = parse_integer_literal();
+  tokens.expect(TokenType::RParen);
+
+  tokens.expect(TokenType::LBrace);
+  auto const then = parse_integer_literal();
+  tokens.expect(TokenType::RBrace);
+
+  tokens.expect(TokenType::CapitalName, "Else");
+  tokens.expect(TokenType::LBrace);
+  auto const els = parse_integer_literal();
+  tokens.expect(TokenType::RBrace);
+
+  return new IfStmt(cond, then, els);
+}
+
+Ast *
 Parser::parse_let_stmt() {
   tokens.expect(TokenType::CapitalName, "Let");
   auto const nametok = tokens.expect(TokenType::SmallName);
