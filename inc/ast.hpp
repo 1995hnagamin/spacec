@@ -8,6 +8,7 @@ class Ast {
       BinaryExpr,
       CallExpr,
       IntegerLiteral,
+      IfStmt,
       LetStmt,
     };
 
@@ -116,6 +117,30 @@ class IntegerLiteralExpr : public Ast {
 
   private:
     int val;
+};
+
+class IfStmt : public Ast {
+  public:
+    IfStmt(Ast *c, Ast *th, Ast *el):
+      Ast(AK::IfStmt), cond(c), then(th), els(el)
+    {
+    }
+    static bool classof(Ast const *a) {
+      return a->get_kind() == AK::IfStmt;
+    }
+    Ast *get_cond() {
+      return cond;
+    }
+    Ast *get_then() {
+      return then;
+    }
+    Ast *get_else() {
+      return els;
+    }
+  private:
+    Ast *cond;
+    Ast *then;
+    Ast *els;
 };
 
 class LetStmt : public Ast {
