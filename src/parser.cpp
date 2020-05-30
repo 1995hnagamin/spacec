@@ -38,6 +38,11 @@ Parser::parse_top_level_decl() {
 }
 
 Ast *
+Parser::parse_expr() {
+  return parse_if_stmt();
+}
+
+Ast *
 Parser::parse_integer_literal() {
   auto const tok = tokens.get();
   assert(tok->type() == TokenType::Digit);
