@@ -30,9 +30,11 @@ class DefFnAst : public Ast {
   public:
     DefFnAst(std::string const &fnname,
         std::vector<std::string> const &paramlist,
+        Type *return_type,
         std::vector<Type *> const &typelist,
         Ast *fnbody):
-      Ast(AK::DefFn), name(fnname), params(paramlist), ptypes(typelist), body(fnbody)
+      Ast(AK::DefFn), name(fnname), params(paramlist),
+      ret(return_type), ptypes(typelist), body(fnbody)
     {
     }
     static bool classof(Ast const *a) {
@@ -47,6 +49,9 @@ class DefFnAst : public Ast {
     Type *get_nth_type(size_t n) const {
       return ptypes[n];
     }
+    Type *get_return_type() {
+      return ret;
+    }
     Ast *get_body() {
       return body;
     }
@@ -55,6 +60,7 @@ class DefFnAst : public Ast {
   private:
     std::string name;
     std::vector<std::string> params;
+    Type *ret;
     std::vector<Type *> ptypes;
     Ast *body;
 };
