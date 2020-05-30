@@ -7,6 +7,11 @@
 
 Ast *
 Parser::parse_top_level_decl() {
+  return parse_deffn_decl();
+}
+
+Ast *
+Parser::parse_deffn_decl() {
   tokens.expect(TokenType::CapitalName, "DefFn");
 
   auto tok = tokens.get();
@@ -26,15 +31,15 @@ Parser::parse_top_level_decl() {
       tok = tokens.get();
     }
   }
-  tokens.expect(TokenType::RParen);
+  assert(tok->type() == TokenType::RParen);
+
+  tokens.expect(TokenType::Symbol, "->");
+  Type *retty = parse_type();
 
   tokens.expect(TokenType::LBrace);
-  if (tokens.seek()->representation() == "Let") {
-
-  }
+  Ast *body = parse_integer_literal();
   tokens.expect(TokenType::RBrace);
-  // return new DefFnAst(name, params, types, body);
-  return nullptr;
+  return new DefFnAst(name, params, retty, types, body);
 }
 
 Ast *
