@@ -4,11 +4,14 @@ TARGET = spccc
 all: $(TARGET)
 
 
-INCLUDES = -I../inc
+LLVM_CONFIG = llvm-config
+INCLUDES = -I../inc \
+	$(shell $(LLVM_CONFIG) --cxxflags)
 CXXFLAGS = -std=c++14 \
 	-Wall -Wextra -Wpedantic \
 	$(INCLUDES)
 LDFLAGS = -lc++
+LDLIBS = $(shell $(LLVM_CONFIG) --ldflags --libs)
 OBJS = spccc.o \
 	ast.o \
 	lexer.o \
