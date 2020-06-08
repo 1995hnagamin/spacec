@@ -1,3 +1,4 @@
+#include <cassert>
 #include <cctype>
 #include <fstream>
 #include <string>
