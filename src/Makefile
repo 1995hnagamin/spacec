@@ -9,6 +9,7 @@ INCLUDES = -I../inc \
 	$(shell $(LLVM_CONFIG) --cxxflags)
 CXXFLAGS = -std=c++14 \
 	-Wall -Wextra -Wpedantic \
+	-Wno-unused-parameter \
 	$(INCLUDES)
 LDFLAGS = -lc++
 LDLIBS = $(shell $(LLVM_CONFIG) --ldflags --libs --system-libs)
