@@ -11,7 +11,7 @@ CXXFLAGS = -std=c++14 \
 	-Wall -Wextra -Wpedantic \
 	$(INCLUDES)
 LDFLAGS = -lc++
-LDLIBS = $(shell $(LLVM_CONFIG) --ldflags --libs)
+LDLIBS = $(shell $(LLVM_CONFIG) --ldflags --libs --system-libs)
 OBJS = spccc.o \
 	ast.o \
 	codegen.o \
