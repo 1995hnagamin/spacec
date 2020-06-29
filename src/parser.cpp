@@ -49,6 +49,24 @@ Parser::parse_expr() {
 }
 
 Ast *
+Parser::parse_primary_expr() {
+  auto const tok = tokens.seek();
+  switch (tok->type()) {
+    case TokenType::Digit:
+      return parse_integer_literal();
+    case TokenType::LParen:
+      {
+        tokens.expect(TokenType::LParen);
+        auto const expr = parse_expr();
+        tokens.expect(TokenType::RParen);
+        return expr;
+      }
+    default:
+      std::abort();
+  }
+}
+
+Ast *
 Parser::parse_integer_literal() {
   auto const tok = tokens.get();
   assert(tok->type() == TokenType::Digit);
