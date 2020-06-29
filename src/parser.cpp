@@ -38,14 +38,14 @@ Parser::parse_deffn_decl() {
   Type *retty = parse_type();
 
   tokens.expect(TokenType::LBrace);
-  Ast *body = parse_integer_literal();
+  Ast *body = parse_expr();
   tokens.expect(TokenType::RBrace);
   return new DefFnAst(name, params, retty, types, body);
 }
 
 Ast *
 Parser::parse_expr() {
-  return parse_if_stmt();
+  return parse_primary_expr();
 }
 
 Ast *
