@@ -1,6 +1,10 @@
 #include <iostream>
 #include <vector>
+
+#include "llvm/IR/Value.h"
+
 #include "ast.hpp"
+#include "codegen.hpp"
 #include "lexer.hpp"
 #include "parser.hpp"
 
@@ -26,7 +30,7 @@ string_of_tokentype(TokenType t) {
 
 void show_tokens(std::vector<Token> const &tokens) {
   for (auto &&token : tokens) {
-    std::cout << string_of_tokentype(token.type()) << ": "
+    std::cerr << string_of_tokentype(token.type()) << ": "
       << token.representation()
       << std::endl;
   }
@@ -41,6 +45,10 @@ int main(int argc, char **argv) {
   auto const tokens = LexicalAnalysis(argv[1]);
   show_tokens(tokens);
   Parser parser(tokens);
-  parser.parse_let_stmt();
+  auto const tunit = parser.parse_deffn_decl();
+
+  CodeGen codegen("null");
+  codegen.execute(tunit);
+
   return 0;
 }

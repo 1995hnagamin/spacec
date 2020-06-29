@@ -1,1 +1,3 @@
-Let i = 32
+DefFn fib(n: i32) -> i32 {
+	0
+}
