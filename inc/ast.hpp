@@ -43,6 +43,9 @@ class DefFnAst : public Ast {
     std::string get_name() const {
       return name;
     }
+    size_t get_arity() const {
+      return params.size();
+    }
     std::string get_nth_name(size_t n) const {
       return params[n];
     }
