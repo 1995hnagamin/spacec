@@ -46,6 +46,22 @@ CodeGen::generate_expr(Ast *body) {
   }
 }
 
+llvm::Value *
+CodeGen::generate_binary_expr(BinaryExprAst *bin) {
+  auto const lhs = generate_expr(bin->get_lhs());
+  auto const rhs = generate_expr(bin->get_rhs());
+  switch (bin->get_op()) {
+    case BO::Plus:
+      return pimpl->thebuilder.CreateAdd(lhs, rhs);
+    case BO::Minus:
+      return pimpl->thebuilder.CreateSub(lhs, rhs);
+    case BO::Mult:
+      return pimpl->thebuilder.CreateMul(lhs, rhs);
+    case BO::Div:
+      return pimpl->thebuilder.CreateSDiv(lhs, rhs);
+  }
+}
+
 void
 CodeGen::generate_function_definition(DefFnAst *def) {
   auto const arity = def->get_arity();
