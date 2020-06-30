@@ -1,7 +1,9 @@
 #include <cassert>
+#include <stack>
 #include <string>
 #include <vector>
 #include "ast.hpp"
+#include "binop.hpp"
 #include "lexer.hpp"
 #include "parser.hpp"
 #include "type.hpp"
@@ -46,6 +48,52 @@ Parser::parse_deffn_decl() {
 Ast *
 Parser::parse_expr() {
   return parse_primary_expr();
+}
+
+static bool
+is_binop_token(Token* tok) {
+  return true;
+}
+
+static BinOp *
+get_binop(Token *tok) {
+  return nullptr;
+}
+
+Ast *
+Parser::parse_binary_expr_seq() {
+  std::stack<Ast *> outstk;
+  std::stack<BinOp *> opstk;
+  auto const hd = parse_primary_expr();
+  outstk.push(hd);
+  while (is_binop_token(tokens.seek())) {
+    auto const op = get_binop(tokens.get());
+    while (!opstk.empty()) {
+      auto const t = opstk.top();
+      if (!comparable(*t, *op)) {
+        std::abort();
+      }
+      if (op->higher_than(*t) || (op->same(*t) && op->is_right())) {
+        break;
+      }
+      opstk.pop(); // == t
+      auto const rhs = outstk.top(); outstk.pop();
+      auto const lhs = outstk.top(); outstk.pop();
+      outstk.push(t->create(lhs, rhs));
+    }
+    opstk.push(op);
+
+    auto const next = parse_primary_expr();
+    outstk.push(next);
+  }
+  while (!opstk.empty()) {
+    auto const op = opstk.top(); opstk.pop();
+    auto const rhs = outstk.top(); outstk.pop();
+    auto const lhs = outstk.top(); outstk.pop();
+    outstk.push(op->create(lhs, rhs));
+  }
+  assert(outstk.size() == 1);
+  return outstk.top();
 }
 
 Ast *
