@@ -15,6 +15,7 @@ LDFLAGS = -lc++
 LDLIBS = $(shell $(LLVM_CONFIG) --ldflags --libs --system-libs)
 OBJS = spccc.o \
 	ast.o \
+	binop.o \
 	codegen.o \
 	lexer.o \
 	parser.o \
