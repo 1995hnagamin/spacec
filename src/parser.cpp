@@ -2,6 +2,9 @@
 #include <stack>
 #include <string>
 #include <vector>
+
+#include "llvm/Support/ErrorHandling.h"
+
 #include "ast.hpp"
 #include "binop.hpp"
 #include "lexer.hpp"
@@ -57,7 +60,17 @@ is_binop_token(Token* tok) {
 
 static BinOp *
 get_binop(Token *tok) {
-  return nullptr;
+  auto const repr = tok->representation();
+  if (repr == "+") {
+    return new BasicBinOp(BO::Plus);
+  } else if (repr == "-") {
+    return new BasicBinOp(BO::Minus);
+  } else if (repr == "*") {
+    return new BasicBinOp(BO::Mult);
+  } else if (repr == "/") {
+    return new BasicBinOp(BO::Div);
+  }
+  llvm_unreachable("operator not implemented");
 }
 
 Ast *
