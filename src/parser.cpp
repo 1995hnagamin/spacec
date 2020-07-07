@@ -55,7 +55,7 @@ Parser::parse_expr() {
 
 static bool
 is_binop_token(Token* tok) {
-  return true;
+  return tok->type() == TokenType::Symbol;
 }
 
 static BinOp *
