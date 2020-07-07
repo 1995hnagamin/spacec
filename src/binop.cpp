@@ -51,8 +51,8 @@ BinOp::is_left() const {
 }
 
 Ast *
-BasicBinOp::create(Ast *lhs, Ast *rhs) const {
-  auto const expr = new BinaryExprAst(get_kind(), lhs, rhs);
+BasicBinOp::create(Ast *lhs, Ast *rhs) {
+  auto const expr = new BinaryExprAst(this, lhs, rhs);
   return expr;
 }
 

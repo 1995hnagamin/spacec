@@ -18,7 +18,7 @@ class BinOp {
     BO get_kind() const {
       return kind;
     }
-    virtual Ast *create(Ast *lhs, Ast *rhs) const = 0;
+    virtual Ast *create(Ast *lhs, Ast *rhs) = 0;
     bool higher_than(BinOp const &other) const;
     bool same(BinOp const &other) const;
 
@@ -42,7 +42,7 @@ class BasicBinOp : public BinOp {
         || op == BO::Mult
         || op == BO::Div;
     }
-    Ast *create(Ast *, Ast *) const override;
+    Ast *create(Ast *, Ast *) override;
 };
 
 bool
