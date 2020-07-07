@@ -50,7 +50,7 @@ Parser::parse_deffn_decl() {
 
 Ast *
 Parser::parse_expr() {
-  return parse_primary_expr();
+  return parse_binary_expr_seq();
 }
 
 static bool
