@@ -3,6 +3,13 @@
 
 class Ast;
 
+enum class BO {
+  Plus,
+  Minus,
+  Mult,
+  Div,
+};
+
 class BinOp {
   public:
     BinOp(BO op): kind(op) {

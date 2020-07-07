@@ -7,6 +7,7 @@
 #include "llvm/Support/Casting.h"
 
 #include "ast.hpp"
+#include "binop.hpp"
 #include "codegen.hpp"
 
 class CodeGenImpl {
@@ -50,7 +51,7 @@ llvm::Value *
 CodeGen::generate_binary_expr(BinaryExprAst *bin) {
   auto const lhs = generate_expr(bin->get_lhs());
   auto const rhs = generate_expr(bin->get_rhs());
-  switch (bin->get_op()) {
+  switch (bin->get_op()->get_kind()) {
     case BO::Plus:
       return pimpl->thebuilder.CreateAdd(lhs, rhs);
     case BO::Minus:

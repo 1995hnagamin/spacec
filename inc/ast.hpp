@@ -68,20 +68,15 @@ class DefFnAst : public Ast {
     Ast *body;
 };
 
-enum class BO {
-  Plus,
-  Minus,
-  Mult,
-  Div,
-};
+class BinOp;
 
 class BinaryExprAst : public Ast {
   public:
-    BinaryExprAst(BO binop, Ast *left, Ast *right): Ast(AK::BinaryExpr), op(binop), lhs(left), rhs(right) {}
+    BinaryExprAst(BinOp *binop, Ast *left, Ast *right): Ast(AK::BinaryExpr), op(binop), lhs(left), rhs(right) {}
     static bool classof(Ast const *a) {
       return a->get_kind() == AK::BinaryExpr;
     }
-    BO get_op() const {
+    BinOp *get_op() const {
       return op;
     }
     Ast *get_lhs() {
@@ -91,7 +86,7 @@ class BinaryExprAst : public Ast {
       return rhs;
     }
   private:
-    BO op;
+    BinOp *op;
     Ast *lhs;
     Ast *rhs;
 };
