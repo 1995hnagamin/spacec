@@ -6,6 +6,7 @@ class Ast {
     enum class AK {
       DefFn,
       BinaryExpr,
+      BlockExpr,
       CallExpr,
       IntegerLiteral,
       IfExpr,
@@ -89,6 +90,22 @@ class BinaryExprAst : public Ast {
     BinOp *op;
     Ast *lhs;
     Ast *rhs;
+};
+
+class BlockExprAst : public Ast {
+  public:
+    BlockExprAst(std::vector<Ast *> const &children): Ast(AK::BlockExpr), stmts(children) {}
+    static bool classof(Ast const *a) {
+      return a->get_kind() == AK::BlockExpr;
+    }
+    size_t size() {
+      return stmts.size();
+    }
+    Ast *get_nth_stmt(size_t n) {
+      return stmts[n];
+    }
+  private:
+    std::vector<Ast *> stmts;
 };
 
 class CallExprAst : public Ast {
