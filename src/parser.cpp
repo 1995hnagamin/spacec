@@ -48,6 +48,29 @@ Parser::parse_deffn_decl() {
   return new DefFnAst(name, params, retty, types, body);
 }
 
+std::vector<Ast *>
+Parser::parse_stmt_seq() {
+  std::vector<Ast *> seq;
+  auto const hd = parse_stmt();
+  seq.push_back(hd);
+
+  while (tokens.seek()->type() == TokenType::Semicolon) {
+    tokens.expect(TokenType::Semicolon);
+    auto const stmt = parse_stmt();
+    seq.push_back(stmt);
+  }
+  return seq;
+}
+
+Ast *
+Parser::parse_stmt() {
+  auto const repr = tokens.seek()->representation();
+  if (repr == "Let") {
+    return parse_let_stmt();
+  }
+  llvm_unreachable("not implemented");
+}
+
 Ast *
 Parser::parse_expr() {
   return parse_binary_expr_seq();

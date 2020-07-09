@@ -6,6 +6,10 @@ class Parser {
     Parser(TokenStream const &stream): tokens(stream) {}
     Ast *parse_top_level_decl();
     Ast *parse_deffn_decl();
+
+    std::vector<Ast *> parse_stmt_seq();
+    Ast *parse_stmt();
+
     Ast *parse_expr();
     Ast *parse_binary_expr_seq();
     Ast *parse_primary_expr();
