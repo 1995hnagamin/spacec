@@ -122,8 +122,15 @@ Parser::parse_primary_expr() {
         tokens.expect(TokenType::RParen);
         return expr;
       }
+    case TokenType::CapitalName:
+      {
+        auto const head = tok->representation();
+        if (head == "If") {
+          return parse_if_expr();
+        }
+      }
     default:
-      std::abort();
+      llvm_unreachable("not implemented");
   }
 }
 
