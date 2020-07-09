@@ -8,7 +8,7 @@ class Ast {
       BinaryExpr,
       CallExpr,
       IntegerLiteral,
-      IfStmt,
+      IfExpr,
       LetStmt,
     };
 
@@ -123,14 +123,14 @@ class IntegerLiteralExpr : public Ast {
     int val;
 };
 
-class IfStmt : public Ast {
+class IfExprAst : public Ast {
   public:
-    IfStmt(Ast *c, Ast *th, Ast *el):
-      Ast(AK::IfStmt), cond(c), then(th), els(el)
+    IfExprAst(Ast *c, Ast *th, Ast *el):
+      Ast(AK::IfExpr), cond(c), then(th), els(el)
     {
     }
     static bool classof(Ast const *a) {
-      return a->get_kind() == AK::IfStmt;
+      return a->get_kind() == AK::IfExpr;
     }
     Ast *get_cond() {
       return cond;

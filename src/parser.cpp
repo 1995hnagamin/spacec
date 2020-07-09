@@ -135,7 +135,7 @@ Parser::parse_integer_literal() {
 }
 
 Ast *
-Parser::parse_if_stmt() {
+Parser::parse_if_expr() {
   tokens.expect(TokenType::CapitalName, "If");
   tokens.expect(TokenType::LParen);
   auto const cond = parse_integer_literal();
@@ -150,7 +150,7 @@ Parser::parse_if_stmt() {
   auto const els = parse_integer_literal();
   tokens.expect(TokenType::RBrace);
 
-  return new IfStmt(cond, then, els);
+  return new IfExprAst(cond, then, els);
 }
 
 Ast *

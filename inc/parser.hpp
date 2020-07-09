@@ -10,7 +10,7 @@ class Parser {
     Ast *parse_binary_expr_seq();
     Ast *parse_primary_expr();
     Ast *parse_integer_literal();
-    Ast *parse_if_stmt();
+    Ast *parse_if_expr();
     Ast *parse_let_stmt();
     Type *parse_type();
 
