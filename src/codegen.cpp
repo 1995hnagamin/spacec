@@ -35,7 +35,7 @@ bool
 CodeGen::execute(Ast *tunit) {
   auto const defun = llvm::dyn_cast<DefFnAst>(tunit);
   generate_function_definition(defun);
-  pimpl->themod.print(llvm::errs(), nullptr);
+  pimpl->themod.print(llvm::outs(), nullptr);
   return true;
 }
 
