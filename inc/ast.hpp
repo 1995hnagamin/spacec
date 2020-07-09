@@ -164,9 +164,9 @@ class IfExprAst : public Ast {
     Ast *els;
 };
 
-class LetStmt : public Ast {
+class LetStmtAst : public Ast {
   public:
-    LetStmt(std::string const &n, Ast *r): Ast(AK::LetStmt), name(n), rhs(r) {
+    LetStmtAst(std::string const &n, Ast *r): Ast(AK::LetStmt), name(n), rhs(r) {
     }
     static bool classof(Ast const *a) {
       return a->get_kind() == AK::LetStmt;

@@ -194,7 +194,7 @@ Parser::parse_let_stmt() {
   auto const nametok = tokens.expect(TokenType::SmallName);
   tokens.expect(TokenType::Symbol, "=");
   auto const rhs = parse_integer_literal();
-  return new LetStmt(nametok->representation(), rhs);
+  return new LetStmtAst(nametok->representation(), rhs);
 }
 
 Type *
