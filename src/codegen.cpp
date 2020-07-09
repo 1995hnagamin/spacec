@@ -42,6 +42,9 @@ CodeGen::execute(Ast *tunit) {
 llvm::Value *
 CodeGen::generate_expr(Ast *body) {
   using llvm::dyn_cast;
+  if (auto const ife = dyn_cast<IfExprAst>(body)) {
+    return generate_if_expr(ife);
+  }
   if (auto const num = dyn_cast<IntegerLiteralExpr>(body)) {
     return generate_integer_literal(num);
   } else if (auto const bin = dyn_cast<BinaryExprAst>(body)) {
@@ -89,6 +92,43 @@ CodeGen::generate_function_definition(DefFnAst *def) {
   pimpl->thebuilder.CreateRet(val);
 
   llvm::verifyFunction(*fn);
+}
+
+
+llvm::Value *
+CodeGen::generate_if_expr(IfExprAst *ife) {
+  auto const zero = llvm::ConstantInt::get(
+      llvm::Type::getInt32Ty(pimpl->thectxt), 0);
+  auto const cond = generate_expr(ife->get_cond());
+  auto const flag = pimpl->thebuilder.CreateICmpNE(cond, zero);
+
+  auto const func = pimpl->thebuilder.GetInsertBlock()->getParent();
+
+  auto thenBB = llvm::BasicBlock::Create(pimpl->thectxt, "then", func);
+  auto elseBB  = llvm::BasicBlock::Create(pimpl->thectxt, "else");
+  auto const mergeBB = llvm::BasicBlock::Create(pimpl->thectxt, "ifcont");
+  pimpl->thebuilder.CreateCondBr(flag, thenBB, elseBB);
+
+  pimpl->thebuilder.SetInsertPoint(thenBB);
+  auto const thenV = generate_expr(ife->get_then());
+
+  pimpl->thebuilder.CreateBr(mergeBB);
+  thenBB = pimpl->thebuilder.GetInsertBlock();
+
+  func->getBasicBlockList().push_back(elseBB);
+  pimpl->thebuilder.SetInsertPoint(elseBB);
+  auto const elseV = generate_expr(ife->get_else());
+  pimpl->thebuilder.CreateBr(mergeBB);
+  elseBB = pimpl->thebuilder.GetInsertBlock();
+
+  func->getBasicBlockList().push_back(mergeBB);
+  pimpl->thebuilder.SetInsertPoint(mergeBB);
+  auto phi = pimpl->thebuilder.CreatePHI(
+      llvm::Type::getInt32Ty(pimpl->thectxt), 2, "iftmp");
+
+  phi->addIncoming(thenV, thenBB);
+  phi->addIncoming(elseV, elseBB);
+  return phi;
 }
 
 llvm::Value *

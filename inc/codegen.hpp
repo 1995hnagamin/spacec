@@ -17,6 +17,7 @@ class CodeGen {
     llvm::Value *generate_expr(Ast *);
     llvm::Value *generate_binary_expr(BinaryExprAst *);
     void generate_function_definition(DefFnAst *);
+    llvm::Value *generate_if_expr(IfExprAst *);
     llvm::Value *generate_integer_literal(IntegerLiteralExpr *);
 
   private:
