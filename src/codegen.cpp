@@ -136,3 +136,17 @@ CodeGen::generate_integer_literal(IntegerLiteralExpr *num) {
   auto const type = llvm::Type::getInt32Ty(pimpl->thectxt);
   return llvm::ConstantInt::get(type, num->get_value());
 }
+
+llvm::Value *
+CodeGen::generate_let_stmt(LetStmtAst *let) {
+  auto const val = generate_expr(let->get_init());
+
+  auto const name = let->get_var_name();
+  llvm::AllocaInst *alloca = pimpl->thebuilder.CreateAlloca(
+      llvm::Type::getInt32Ty(pimpl->thectxt),
+      0,
+      name);
+  pimpl->thebuilder.CreateStore(val, alloca);
+
+  return alloca;
+}
