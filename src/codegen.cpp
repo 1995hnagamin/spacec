@@ -42,13 +42,14 @@ CodeGen::execute(Ast *tunit) {
 llvm::Value *
 CodeGen::generate_expr(Ast *body) {
   using llvm::dyn_cast;
+  if (auto const bin = dyn_cast<BinaryExprAst>(body)) {
+    return generate_binary_expr(bin);
+  }
   if (auto const ife = dyn_cast<IfExprAst>(body)) {
     return generate_if_expr(ife);
   }
   if (auto const num = dyn_cast<IntegerLiteralExpr>(body)) {
     return generate_integer_literal(num);
-  } else if (auto const bin = dyn_cast<BinaryExprAst>(body)) {
-    return generate_binary_expr(bin);
   }
   llvm_unreachable("not implemented");
 }
