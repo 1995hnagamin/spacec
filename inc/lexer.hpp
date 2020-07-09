@@ -12,6 +12,7 @@ enum class TokenType {
   LBrace,
   RBrace,
   Comma,
+  Semicolon,
   Symbol,
   Eof
 };

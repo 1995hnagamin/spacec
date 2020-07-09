@@ -133,6 +133,9 @@ LexicalAnalysis(std::string const &filename) {
       case ',':
         tokens.emplace_back(TokenType::Comma, ",");
         continue;
+      case ';':
+        tokens.emplace_back(TokenType::Semicolon, ";");
+        continue;
       default:
         ; // do nothing
     }
