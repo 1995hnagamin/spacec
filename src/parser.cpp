@@ -133,6 +133,14 @@ Parser::parse_binary_expr_seq() {
 }
 
 Ast *
+Parser::parse_block_expr() {
+  tokens.expect(TokenType::LBrace);
+  auto const stmts = parse_stmt_seq();
+  tokens.expect(TokenType::RBrace);
+  return new BlockExprAst(stmts);
+}
+
+Ast *
 Parser::parse_primary_expr() {
   auto const tok = tokens.seek();
   switch (tok->type()) {
@@ -145,6 +153,8 @@ Parser::parse_primary_expr() {
         tokens.expect(TokenType::RParen);
         return expr;
       }
+    case TokenType::LBrace:
+      return parse_block_expr();
     case TokenType::CapitalName:
       {
         auto const head = tok->representation();
