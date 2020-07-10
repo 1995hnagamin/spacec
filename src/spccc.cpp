@@ -43,7 +43,6 @@ int main(int argc, char **argv) {
   }
 
   auto const tokens = LexicalAnalysis(argv[1]);
-  show_tokens(tokens);
   Parser parser(tokens);
   auto const tunit = parser.parse_top_level_decl();
 
