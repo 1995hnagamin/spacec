@@ -180,7 +180,22 @@ Ast *
 Parser::parse_ident_expr() {
   auto const tok = tokens.get();
   auto const var = new VarRefExprAst(tok->representation());
-  return var;
+  if (tokens.seek()->type() != TokenType::LParen) {
+    return var;
+  }
+
+  // function call
+  tokens.expect(TokenType::LParen);
+  std::vector<Ast *> args;
+  while (tokens.seek()->type() != TokenType::RParen) {
+    if (args.size() > 0) {
+      tokens.expect(TokenType::Comma);
+    }
+    auto const arg = parse_expr();
+    args.push_back(arg);
+  }
+  tokens.expect(TokenType::RParen);
+  return new CallExprAst(var, args);
 }
 
 Ast *
