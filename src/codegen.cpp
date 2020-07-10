@@ -79,6 +79,9 @@ CodeGen::generate_expr(Ast *body) {
   if (auto const bin = dyn_cast<BinaryExprAst>(body)) {
     return generate_binary_expr(bin);
   }
+  if (auto const block = dyn_cast<BlockExprAst>(body)) {
+    return generate_block_expr(block);
+  }
   if (auto const ife = dyn_cast<IfExprAst>(body)) {
     return generate_if_expr(ife);
   }
@@ -102,6 +105,26 @@ CodeGen::generate_binary_expr(BinaryExprAst *bin) {
     case BO::Div:
       return pimpl->thebuilder.CreateSDiv(lhs, rhs);
   }
+}
+
+llvm::Value *
+CodeGen::generate_block_expr(BlockExprAst *block) {
+  pimpl->push_vartab();
+  auto const func = pimpl->thebuilder.GetInsertBlock()->getParent();
+  auto BB = llvm::BasicBlock::Create(pimpl->thectxt, "block", func);
+  pimpl->thebuilder.CreateBr(BB);
+  pimpl->thebuilder.SetInsertPoint(BB);
+
+  std::vector<llvm::Value *> seq;
+  for (size_t i = 0, len = block->size(); i < len; ++i) {
+    auto const ast = block->get_nth_stmt(i);
+    auto const val = generate_expr(ast);
+    seq.push_back(val);
+  }
+
+  BB = pimpl->thebuilder.GetInsertBlock();
+  pimpl->pop_vartab();
+  return seq.back();
 }
 
 void
