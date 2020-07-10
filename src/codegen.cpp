@@ -146,9 +146,18 @@ CodeGen::generate_function_definition(DefFnAst *def) {
   llvm::BasicBlock *BB = llvm::BasicBlock::Create(pimpl->thectxt, "entry", fn);
   pimpl->thebuilder.SetInsertPoint(BB);
 
+  pimpl->push_vartab();
+  size_t i = 0;
+  for (auto AI = fn->arg_begin(); i < arity; ++i, ++AI) {
+    auto const name = def->get_nth_name(i);
+    AI->setName(name);
+    pimpl->register_var(name, AI);
+  }
+
   auto const val = generate_expr(def->get_body());
   pimpl->thebuilder.CreateRet(val);
 
+  pimpl->pop_vartab();
   llvm::verifyFunction(*fn);
 }
 
