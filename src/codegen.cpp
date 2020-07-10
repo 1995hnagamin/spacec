@@ -21,7 +21,41 @@ class CodeGenImpl {
     llvm::LLVMContext thectxt;
     llvm::Module themod;
     llvm::IRBuilder<> thebuilder;
+
+    using varmap = std::map<std::string, llvm::Value *>;
+    std::vector<varmap> vartab;
+    llvm::Value *lookup_vartab(std::string const &name) const;
+    void push_vartab();
+    void pop_vartab();
+    void register_var(std::string const &name, llvm::Value *val);
 };
+
+llvm::Value *
+CodeGenImpl::lookup_vartab(std::string const &name) const {
+  for (auto iter = vartab.rbegin(); iter != vartab.rend(); ++iter) {
+    for (auto &&kv : *iter) {
+      if (kv.first == name) {
+        return kv.second;
+      }
+    }
+  }
+  return nullptr;
+}
+
+void
+CodeGenImpl::push_vartab() {
+  vartab.push_back(varmap());
+}
+
+void
+CodeGenImpl::pop_vartab() {
+  vartab.pop_back();
+}
+
+void
+CodeGenImpl::register_var(std::string const &name, llvm::Value *val) {
+  vartab.back()[name] = val;
+}
 
 CodeGen::CodeGen(std::string const &modid):
   pimpl(new CodeGenImpl(modid)) {
