@@ -162,6 +162,8 @@ Parser::parse_primary_expr() {
           return parse_if_expr();
         }
       }
+    case TokenType::SmallName:
+      return parse_ident_expr();
     default:
       llvm_unreachable("not implemented");
   }
@@ -172,6 +174,13 @@ Parser::parse_integer_literal() {
   auto const tok = tokens.get();
   assert(tok->type() == TokenType::Digit);
   return new IntegerLiteralExpr(std::stoi(tok->representation()));
+}
+
+Ast *
+Parser::parse_ident_expr() {
+  auto const tok = tokens.get();
+  auto const var = new VarRefExprAst(tok->representation());
+  return var;
 }
 
 Ast *

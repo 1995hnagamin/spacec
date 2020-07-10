@@ -15,6 +15,7 @@ class Parser {
     Ast *parse_block_expr();
     Ast *parse_primary_expr();
     Ast *parse_integer_literal();
+    Ast *parse_ident_expr();
     Ast *parse_if_expr();
     Ast *parse_let_stmt();
     Type *parse_type();
