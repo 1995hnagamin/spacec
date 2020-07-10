@@ -21,6 +21,7 @@ class CodeGen {
     llvm::Value *generate_if_expr(IfExprAst *);
     llvm::Value *generate_integer_literal(IntegerLiteralExpr *);
     llvm::Value *generate_let_stmt(LetStmtAst *);
+    llvm::Value *generate_var_ref(VarRefExprAst *);
 
   private:
     CodeGenImpl *pimpl;

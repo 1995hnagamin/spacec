@@ -88,6 +88,9 @@ CodeGen::generate_expr(Ast *body) {
   if (auto const num = dyn_cast<IntegerLiteralExpr>(body)) {
     return generate_integer_literal(num);
   }
+  if (auto const var = dyn_cast<VarRefExprAst>(body)) {
+    return generate_var_ref(var);
+  }
   llvm_unreachable("not implemented");
 }
 
@@ -216,4 +219,9 @@ CodeGen::generate_let_stmt(LetStmtAst *let) {
   pimpl->thebuilder.CreateStore(val, alloca);
 
   return alloca;
+}
+
+llvm::Value *
+CodeGen::generate_var_ref(VarRefExprAst *var) {
+  return pimpl->lookup_vartab(var->get_name());
 }
