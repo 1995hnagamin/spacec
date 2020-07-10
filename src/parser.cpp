@@ -68,7 +68,7 @@ Parser::parse_stmt() {
   if (repr == "Let") {
     return parse_let_stmt();
   }
-  llvm_unreachable("not implemented");
+  return parse_expr();
 }
 
 Ast *
