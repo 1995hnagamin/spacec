@@ -1,3 +1,13 @@
 DefFn fib(n: i32) -> i32 {
-	0
+	If n Then {
+		If n-1
+		Then fib(n-1) + fib(n-2)
+		Else 1
+	} Else {
+		0
+	}
+}
+
+DefFn main() -> i32 {
+	fib(10)
 }
