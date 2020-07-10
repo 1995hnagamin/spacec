@@ -11,6 +11,7 @@ class Ast {
       IntegerLiteral,
       IfExpr,
       LetStmt,
+      VarRefExpr,
     };
 
   public:
@@ -180,6 +181,20 @@ class LetStmtAst : public Ast {
   private:
     std::string name;
     Ast *rhs;
+};
+
+class VarRefExprAst : public Ast {
+  public:
+    VarRefExprAst(std::string const &n): Ast(AK::VarRefExpr), name(n) {
+    }
+    static bool classof(Ast const *a) {
+      return a->get_kind() == AK::VarRefExpr;
+    }
+    std::string get_name() const {
+      return name;
+    }
+  private:
+    std::string name;
 };
 
 #endif /* !AST_HPP */
