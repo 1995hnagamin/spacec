@@ -118,6 +118,9 @@ class CallExprAst : public Ast {
     Ast *get_callee() {
       return callee;
     }
+    size_t get_nargs() const {
+      return args.size();
+    }
     Ast *get_nth_arg(size_t n) {
       return args[n];
     }
