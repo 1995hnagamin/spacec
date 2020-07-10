@@ -66,9 +66,17 @@ CodeGen::~CodeGen() {
 }
 
 bool
-CodeGen::execute(Ast *tunit) {
-  auto const defun = llvm::dyn_cast<DefFnAst>(tunit);
-  generate_function_definition(defun);
+CodeGen::execute(Ast *prog) {
+  pimpl->push_vartab();
+
+  auto const tunit = llvm::dyn_cast<TranslationUnitAst>(prog);
+  for (size_t i = 0, len = tunit->size(); i < len; ++i) {
+    auto const defun = llvm::dyn_cast<DefFnAst>(tunit->get_nth_func(i));
+    generate_function_definition(defun);
+  }
+
+  pimpl->pop_vartab();
+
   pimpl->themod.print(llvm::outs(), nullptr);
   return true;
 }
@@ -160,6 +168,7 @@ CodeGen::generate_function_definition(DefFnAst *def) {
       llvm::Function::ExternalLinkage,
       llvm::Twine(def->get_name()),
       pimpl->themod);
+  pimpl->register_var(def->get_name(), fn);
 
   llvm::BasicBlock *BB = llvm::BasicBlock::Create(pimpl->thectxt, "entry", fn);
   pimpl->thebuilder.SetInsertPoint(BB);
