@@ -82,6 +82,9 @@ CodeGen::generate_expr(Ast *body) {
   if (auto const block = dyn_cast<BlockExprAst>(body)) {
     return generate_block_expr(block);
   }
+  if (auto const call = dyn_cast<CallExprAst>(body)) {
+    return generate_call_expr(call);
+  }
   if (auto const ife = dyn_cast<IfExprAst>(body)) {
     return generate_if_expr(ife);
   }
@@ -128,6 +131,18 @@ CodeGen::generate_block_expr(BlockExprAst *block) {
   BB = pimpl->thebuilder.GetInsertBlock();
   pimpl->pop_vartab();
   return seq.back();
+}
+
+llvm::Value *
+CodeGen::generate_call_expr(CallExprAst *call) {
+  auto const fn = generate_expr(call->get_callee());
+
+  std::vector<llvm::Value *> args;
+  for (size_t i = 0, len = call->get_nargs(); i < len; ++i) {
+    auto const expr = generate_expr(call->get_nth_arg(i));
+    args.push_back(expr);
+  }
+  return pimpl->thebuilder.CreateCall(fn, args, "calltmp");
 }
 
 void
