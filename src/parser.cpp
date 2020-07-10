@@ -13,7 +13,12 @@
 
 Ast *
 Parser::parse_top_level_decl() {
-  return parse_deffn_decl();
+  std::vector<Ast *> funcs;
+  while (tokens.seek()->representation() == "DefFn") {
+    auto const fn = parse_deffn_decl();
+    funcs.push_back(fn);
+  }
+  return new TranslationUnitAst(funcs);
 }
 
 Ast *
