@@ -153,7 +153,7 @@ CodeGen::generate_call_expr(CallExprAst *call) {
   return pimpl->thebuilder.CreateCall(fn, args, "calltmp");
 }
 
-void
+llvm::Value *
 CodeGen::generate_function_definition(DefFnAst *def) {
   auto const arity = def->get_arity();
   std::vector<llvm::Type *> param_types(
@@ -186,6 +186,8 @@ CodeGen::generate_function_definition(DefFnAst *def) {
 
   pimpl->pop_vartab();
   llvm::verifyFunction(*fn);
+
+  return fn;
 }
 
 
