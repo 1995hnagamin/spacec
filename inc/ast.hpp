@@ -11,6 +11,7 @@ class Ast {
       IntegerLiteral,
       IfExpr,
       LetStmt,
+      TranslationUnit,
       VarRefExpr,
     };
 
@@ -184,6 +185,23 @@ class LetStmtAst : public Ast {
   private:
     std::string name;
     Ast *rhs;
+};
+
+class TranslationUnitAst : public Ast {
+  public:
+    TranslationUnitAst(std::vector<Ast *> const &fn): Ast(AK::TranslationUnit), funcs(fn) {
+    }
+    static bool classof(Ast const *a) {
+      return a->get_kind() == AK::TranslationUnit;
+    }
+    size_t size() const {
+      return funcs.size();
+    }
+    Ast *get_nth_func(size_t n) {
+      return funcs[n];
+    }
+  private:
+    std::vector<Ast *> funcs;
 };
 
 class VarRefExprAst : public Ast {
