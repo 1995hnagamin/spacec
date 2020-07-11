@@ -216,8 +216,7 @@ CodeGen::generate_function_definition(DefFnAst *def) {
 
 llvm::Value *
 CodeGen::generate_if_expr(IfExprAst *ife) {
-  auto const zero = llvm::ConstantInt::get(
-      llvm::Type::getInt32Ty(pimpl->thectxt), 0);
+  auto const zero = pimpl->thebuilder.getInt1(false);
   auto const cond = generate_expr(ife->get_cond());
   auto const flag = pimpl->thebuilder.CreateICmpNE(cond, zero);
 
