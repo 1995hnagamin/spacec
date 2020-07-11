@@ -24,6 +24,8 @@ class CodeGen {
     llvm::Value *generate_let_stmt(LetStmtAst *);
     llvm::Value *generate_var_ref(VarRefExprAst *);
 
+    void display_llvm_ir(llvm::raw_ostream &);
+
   private:
     CodeGenImpl *pimpl;
 };

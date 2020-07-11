@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "llvm/IR/Value.h"
+#include "llvm/Support/raw_ostream.h"
 
 #include "ast.hpp"
 #include "codegen.hpp"
@@ -48,6 +49,8 @@ int main(int argc, char **argv) {
 
   CodeGen codegen("null");
   codegen.execute(tunit);
+
+  codegen.display_llvm_ir(llvm::outs());
 
   return 0;
 }

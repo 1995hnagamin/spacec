@@ -88,8 +88,12 @@ CodeGen::execute(Ast *prog) {
 
   pimpl->pop_vartab();
 
-  pimpl->themod.print(llvm::outs(), nullptr);
   return true;
+}
+
+void
+CodeGen::display_llvm_ir(llvm::raw_ostream &s) {
+  pimpl->themod.print(s, nullptr);
 }
 
 llvm::Value *
