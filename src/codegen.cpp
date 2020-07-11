@@ -136,7 +136,12 @@ CodeGen::generate_binary_expr(BinaryExprAst *bin) {
       return pimpl->thebuilder.CreateMul(lhs, rhs);
     case BO::Div:
       return pimpl->thebuilder.CreateSDiv(lhs, rhs);
+    case BO::Lt:
+      return pimpl->thebuilder.CreateICmpSLT(lhs, rhs);
+    case BO::Gt:
+      return pimpl->thebuilder.CreateICmpSGT(lhs, rhs);
   }
+  llvm_unreachable("not implemented");
 }
 
 llvm::Value *
