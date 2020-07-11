@@ -222,7 +222,7 @@ Parser::parse_let_stmt() {
   tokens.expect(TokenType::CapitalName, "Let");
   auto const nametok = tokens.expect(TokenType::SmallName);
   tokens.expect(TokenType::Symbol, "=");
-  auto const rhs = parse_integer_literal();
+  auto const rhs = parse_expr();
   return new LetStmtAst(nametok->representation(), rhs);
 }
 
