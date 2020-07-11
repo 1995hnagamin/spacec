@@ -97,6 +97,10 @@ get_binop(Token *tok) {
     return new BasicBinOp(BO::Mult);
   } else if (repr == "/") {
     return new BasicBinOp(BO::Div);
+  } else if (repr == "<") {
+    return new BasicBinOp(BO::Lt);
+  } else if (repr == ">") {
+    return new BasicBinOp(BO::Gt);
   }
   llvm_unreachable("operator not implemented");
 }
