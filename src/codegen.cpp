@@ -27,7 +27,7 @@ class CodeGenImpl {
     llvm::Value *lookup_vartab(std::string const &name) const;
     void push_vartab();
     void pop_vartab();
-    void register_var(std::string const &name, llvm::Value *val);
+    void register_val(std::string const &name, llvm::Value *val);
 };
 
 llvm::Value *
@@ -53,7 +53,7 @@ CodeGenImpl::pop_vartab() {
 }
 
 void
-CodeGenImpl::register_var(std::string const &name, llvm::Value *val) {
+CodeGenImpl::register_val(std::string const &name, llvm::Value *val) {
   vartab.back()[name] = val;
 }
 
@@ -168,7 +168,7 @@ CodeGen::generate_function_definition(DefFnAst *def) {
       llvm::Function::ExternalLinkage,
       llvm::Twine(def->get_name()),
       pimpl->themod);
-  pimpl->register_var(def->get_name(), fn);
+  pimpl->register_val(def->get_name(), fn);
 
   llvm::BasicBlock *BB = llvm::BasicBlock::Create(pimpl->thectxt, "entry", fn);
   pimpl->thebuilder.SetInsertPoint(BB);
@@ -178,7 +178,7 @@ CodeGen::generate_function_definition(DefFnAst *def) {
   for (auto AI = fn->arg_begin(); i < arity; ++i, ++AI) {
     auto const name = def->get_nth_name(i);
     AI->setName(name);
-    pimpl->register_var(name, AI);
+    pimpl->register_val(name, AI);
   }
 
   auto const val = generate_expr(def->get_body());
