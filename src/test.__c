@@ -1,7 +1,10 @@
 DefFn fib(n: i32) -> i32 {
 	If n Then {
-		If n-1
-		Then fib(n-1) + fib(n-2)
+		If n-1 Then {
+			Let a = fib(n-1);
+			Let b = fib(n-2);
+			a + b
+		}
 		Else 1
 	} Else {
 		0
