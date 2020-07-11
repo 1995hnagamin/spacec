@@ -28,7 +28,7 @@ class CodeGenImpl {
     void push_vartab();
     void pop_vartab();
     void register_val(std::string const &name, llvm::Value *val);
-    void register_auto_var(std::string const &name, llvm::Value *val);
+    llvm::AllocaInst *register_auto_var(std::string const &name, llvm::Value *val);
 };
 
 llvm::Value *
@@ -58,12 +58,14 @@ CodeGenImpl::register_val(std::string const &name, llvm::Value *val) {
   vartab.back()[name] = val;
 }
 
-void
+llvm::AllocaInst *
 CodeGenImpl::register_auto_var(std::string const &name, llvm::Value *val) {
   auto const fn = thebuilder.GetInsertBlock()->getParent();
   llvm::IRBuilder<> entry(&fn->getEntryBlock(), fn->getEntryBlock().begin());
   auto const alloca = entry.CreateAlloca(llvm::Type::getInt32Ty(thectxt), 0, name);
   register_val(name, alloca);
+
+  return alloca;
 }
 
 CodeGen::CodeGen(std::string const &modid):
