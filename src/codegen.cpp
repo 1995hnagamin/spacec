@@ -257,5 +257,10 @@ CodeGen::generate_let_stmt(LetStmtAst *let) {
 
 llvm::Value *
 CodeGen::generate_var_ref(VarRefExprAst *var) {
-  return pimpl->lookup_vartab(var->get_name());
+  auto const name = var->get_name();
+  auto const val = pimpl->lookup_vartab(name);
+  if (auto const alloc = llvm::dyn_cast<llvm::AllocaInst>(val)) {
+    return pimpl->thebuilder.CreateLoad(alloc, name);
+  }
+  return val;
 }
