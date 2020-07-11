@@ -8,6 +8,8 @@ enum class BO {
   Minus,
   Mult,
   Div,
+  Lt,
+  Gt,
 };
 
 class BinOp {
@@ -40,7 +42,9 @@ class BasicBinOp : public BinOp {
       return op == BO::Plus
         || op == BO::Minus
         || op == BO::Mult
-        || op == BO::Div;
+        || op == BO::Div
+        || op == BO::Lt
+        || op == BO::Gt;
     }
     Ast *create(Ast *, Ast *) override;
 };
