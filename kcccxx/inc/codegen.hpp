@@ -10,7 +10,8 @@ class CodeGenImpl;
 
 class CodeGen {
   public:
-    CodeGen(std::string const &module_id);
+    CodeGen(llvm::LLVMContext &ctxt,
+        llvm::Module &mod, llvm::IRBuilder<> &builder);
     ~CodeGen();
     bool execute(Ast *translation_unit);
 

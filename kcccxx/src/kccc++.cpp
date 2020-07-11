@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/Module.h"
 #include "llvm/IR/Value.h"
 #include "llvm/Support/raw_ostream.h"
 
@@ -51,7 +53,11 @@ int main(int argc, char **argv) {
   TypeChecker tc;
   tc.traverse_tunit(tunit);
 
-  CodeGen codegen("null");
+  llvm::LLVMContext ctxt;
+  llvm::Module mod("null", ctxt);
+  llvm::IRBuilder<> builder(ctxt);
+
+  CodeGen codegen(ctxt, mod, builder);
   codegen.execute(tunit);
 
   codegen.display_llvm_ir(llvm::outs());
