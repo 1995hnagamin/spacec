@@ -107,6 +107,9 @@ CodeGen::generate_expr(Ast *body) {
   if (auto const ife = dyn_cast<IfExprAst>(body)) {
     return generate_if_expr(ife);
   }
+  if (auto const let = dyn_cast<LetStmtAst>(body)) {
+    return generate_let_stmt(let);
+  }
   if (auto const num = dyn_cast<IntegerLiteralExpr>(body)) {
     return generate_integer_literal(num);
   }
