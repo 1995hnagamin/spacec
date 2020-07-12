@@ -47,9 +47,7 @@ Parser::parse_deffn_decl() {
   tokens.expect(TokenType::Symbol, "->");
   Type *retty = parse_type();
 
-  tokens.expect(TokenType::LBrace);
-  Ast *body = parse_expr();
-  tokens.expect(TokenType::RBrace);
+  Ast *body = parse_block_expr();
   return new DefFnAst(name, params, retty, types, body);
 }
 
