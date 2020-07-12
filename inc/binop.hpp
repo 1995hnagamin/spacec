@@ -8,6 +8,7 @@ enum class BO {
   Minus,
   Mult,
   Div,
+  Eq,
   Lt,
   Gt,
 };

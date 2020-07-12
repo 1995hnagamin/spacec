@@ -136,6 +136,8 @@ CodeGen::generate_binary_expr(BinaryExprAst *bin) {
       return pimpl->thebuilder.CreateMul(lhs, rhs);
     case BO::Div:
       return pimpl->thebuilder.CreateSDiv(lhs, rhs);
+    case BO::Eq:
+      return pimpl->thebuilder.CreateICmpEQ(lhs, rhs);
     case BO::Lt:
       return pimpl->thebuilder.CreateICmpSLT(lhs, rhs);
     case BO::Gt:
