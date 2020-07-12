@@ -1,6 +1,6 @@
 DefFn fib(n: i32) -> i32 {
 	If n < 1 Then 0
-	Else If 2 > n Then 1
+	Else If n = 1 Then 1
 	Else {
 		Let a = fib(n-1);
 		Let b = fib(n-2);
