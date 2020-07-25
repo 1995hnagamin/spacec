@@ -17,6 +17,9 @@ class Type {
     TK get_kind() const {
       return kind;
     }
+    virtual bool equal(Type *lhs) const {
+      return get_kind() == lhs->get_kind();
+    }
 
   private:
     TK const kind;
@@ -32,6 +35,7 @@ class IntNType : public Type {
     int get_width() const {
       return width;
     }
+    bool equal(Type *) const override;
 
   private:
     int const width;
@@ -62,6 +66,7 @@ class TyVar : public Type {
     static bool classof(Type const *t) {
       return t->get_kind() == TK::TyVar;
     }
+    bool equal(Type *) const override;
   private:
     size_t id;
 };
