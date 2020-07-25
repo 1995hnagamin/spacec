@@ -23,6 +23,9 @@ class IntNType : public Type {
   public:
     IntNType(int w): Type(TK::IntN), width(w) {
     }
+    static bool classof(Type const *t) {
+      return t->get_kind() == TK::IntN;
+    }
     int get_width() const {
       return width;
     }
