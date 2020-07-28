@@ -19,7 +19,8 @@ OBJS = spccc.o \
 	codegen.o \
 	lexer.o \
 	parser.o \
-	type.o
+	type.o \
+	typechecker.o
 
 $(TARGET): $(OBJS)
 
