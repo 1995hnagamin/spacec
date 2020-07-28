@@ -11,7 +11,7 @@
 #include "parser.hpp"
 #include "type.hpp"
 
-Ast *
+TranslationUnitAst *
 Parser::parse_top_level_decl() {
   std::vector<Ast *> funcs;
   while (tokens.seek()->representation() == "DefFn") {

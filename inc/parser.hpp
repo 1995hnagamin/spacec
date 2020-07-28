@@ -4,7 +4,7 @@
 class Parser {
   public:
     Parser(TokenStream const &stream): tokens(stream) {}
-    Ast *parse_top_level_decl();
+    TranslationUnitAst *parse_top_level_decl();
     Ast *parse_deffn_decl();
 
     std::vector<Ast *> parse_stmt_seq();
