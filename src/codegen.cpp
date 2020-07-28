@@ -136,7 +136,14 @@ CodeGen::generate_binary_expr(BinaryExprAst *bin) {
       return pimpl->thebuilder.CreateMul(lhs, rhs);
     case BO::Div:
       return pimpl->thebuilder.CreateSDiv(lhs, rhs);
+    case BO::Eq:
+      return pimpl->thebuilder.CreateICmpEQ(lhs, rhs);
+    case BO::Lt:
+      return pimpl->thebuilder.CreateICmpSLT(lhs, rhs);
+    case BO::Gt:
+      return pimpl->thebuilder.CreateICmpSGT(lhs, rhs);
   }
+  llvm_unreachable("not implemented");
 }
 
 llvm::Value *
@@ -211,8 +218,7 @@ CodeGen::generate_function_definition(DefFnAst *def) {
 
 llvm::Value *
 CodeGen::generate_if_expr(IfExprAst *ife) {
-  auto const zero = llvm::ConstantInt::get(
-      llvm::Type::getInt32Ty(pimpl->thectxt), 0);
+  auto const zero = pimpl->thebuilder.getInt1(false);
   auto const cond = generate_expr(ife->get_cond());
   auto const flag = pimpl->thebuilder.CreateICmpNE(cond, zero);
 

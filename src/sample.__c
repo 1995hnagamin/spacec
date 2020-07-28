@@ -1,7 +1,10 @@
 DefFn fib(n: i32) -> i32 {
-	If (n < 2)
+	If (n < 3) Then
 		1
 	Else
 		fib(n-1) + fib(n-2)
-	End
+}
+
+DefFn main() -> i32 {
+	fib(10)
 }

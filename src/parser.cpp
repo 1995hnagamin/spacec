@@ -47,9 +47,7 @@ Parser::parse_deffn_decl() {
   tokens.expect(TokenType::Symbol, "->");
   Type *retty = parse_type();
 
-  tokens.expect(TokenType::LBrace);
-  Ast *body = parse_expr();
-  tokens.expect(TokenType::RBrace);
+  Ast *body = parse_block_expr();
   return new DefFnAst(name, params, retty, types, body);
 }
 
@@ -97,6 +95,12 @@ get_binop(Token *tok) {
     return new BasicBinOp(BO::Mult);
   } else if (repr == "/") {
     return new BasicBinOp(BO::Div);
+  } else if (repr == "=") {
+    return new BasicBinOp(BO::Eq);
+  } else if (repr == "<") {
+    return new BasicBinOp(BO::Lt);
+  } else if (repr == ">") {
+    return new BasicBinOp(BO::Gt);
   }
   llvm_unreachable("operator not implemented");
 }
