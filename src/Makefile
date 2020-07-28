@@ -26,6 +26,8 @@ $(TARGET): $(OBJS)
 
 ast.o: ../inc/ast.hpp
 
+codegen.o: ../inc/ast.hpp ../inc/binop.hpp ../inc/codegen.hpp
+
 lexer.o: ../inc/lexer.hpp
 
 parser.o: ../inc/ast.hpp ../inc/lexer.hpp ../inc/parser.hpp

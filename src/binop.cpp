@@ -7,11 +7,14 @@
 
 static
 bool bo_higher_than(BO lhs, BO rhs) {
-  static bool const gt[4][4] = {
-    { 0, 0, 0, 0, },
-    { 0, 0, 0, 0, },
-    { 1, 1, 0, 0, },
-    { 1, 1, 0, 0, },
+  static bool constexpr gt[7][7] = {
+    { 0, 0, 0, 0, 1, 1, 1, },
+    { 0, 0, 0, 0, 1, 1, 1, },
+    { 1, 1, 0, 0, 1, 1, 1, },
+    { 1, 1, 0, 0, 1, 1, 1, },
+    { 0, 0, 0, 0, 0, 0, 0, },
+    { 0, 0, 0, 0, 0, 0, 0, },
+    { 0, 0, 0, 0, 0, 0, 0, },
   };
   auto const l = static_cast<int>(lhs);
   auto const r = static_cast<int>(rhs);
@@ -23,9 +26,13 @@ bool bo_same(BO lhs, BO rhs) {
   static int constexpr group[] = {
     1, 1,
     2, 2,
+    0, 0, 0,
   };
   auto const l = static_cast<int>(lhs);
   auto const r = static_cast<int>(rhs);
+  if (group[l] == 0 || group[r] == 0) {
+    return false;
+  }
   return group[l] == group[r];
 }
 
@@ -46,6 +53,7 @@ bool
 BinOp::is_left() const {
   static bool constexpr left[] = {
     1, 1, 1, 1,
+    1, 1, 1,
   };
   return left[static_cast<int>(get_kind())];
 }
