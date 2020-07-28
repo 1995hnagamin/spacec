@@ -5,6 +5,7 @@ class Type {
   public:
     enum class TK {
       Bool,
+      Function,
       IntN,
       Unit,
       TyVar,
@@ -48,6 +49,29 @@ class BoolType : public Type {
     static bool classof(Type const *t) {
       return t->get_kind() == TK::Bool;
     }
+};
+
+class FunctionType : public Type {
+  public:
+    FunctionType(Type *retty, std::vector<Type *> paramlist):
+      Type(TK::Function), ret(retty), params(paramlist) {
+    }
+    static bool classof(Type const *t) {
+      return t->get_kind() == TK::Function;
+    }
+    bool equal(Type *) const override;
+    size_t get_arity() const {
+      return params.size();
+    }
+    Type *get_return_type() const {
+      return ret;
+    }
+    Type *get_nth_param(size_t i) const {
+      return params[i];
+    }
+  private:
+    Type *ret;
+    std::vector<Type *> params;
 };
 
 class UnitType : public Type {
