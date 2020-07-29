@@ -5,6 +5,7 @@
 #include "llvm/Support/Casting.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "ast.hpp"
+#include "binop.hpp"
 #include "type.hpp"
 
 #include "typechecker.hpp"
@@ -88,6 +89,9 @@ TypeChecker::traverse_deffn(DefFnAst *def) {
 Type *
 TypeChecker::traverse_expr(Ast *expr) {
   using llvm::dyn_cast;
+  if (auto const bin = dyn_cast<BinaryExprAst>(expr)) {
+    return traverse_binary_expr(bin);
+  }
   if (auto const block = dyn_cast<BlockExprAst>(expr)) {
     return traverse_block_expr(block);
   }
@@ -96,6 +100,36 @@ TypeChecker::traverse_expr(Ast *expr) {
   }
   if (auto const let = dyn_cast<LetStmtAst>(expr)) {
     return traverse_let_stmt(let);
+  }
+  llvm_unreachable("not implemented");
+}
+
+Type *
+TypeChecker::traverse_binary_expr(BinaryExprAst *bin) {
+  switch (bin->get_op()->get_kind()) {
+    case BO::Eq:
+    case BO::Lt:
+    case BO::Gt:
+    {
+      auto const lty = traverse_expr(bin->get_lhs());
+      auto const rty = traverse_expr(bin->get_rhs());
+      if (!llvm::isa<IntNType>(lty) || !llvm::isa<IntNType>(rty)) {
+        llvm::report_fatal_error("must be integer");
+      }
+      return new BoolType;
+    }
+    case BO::Plus:
+    case BO::Minus:
+    case BO::Mult:
+    case BO::Div:
+    {
+      auto const lty = traverse_expr(bin->get_lhs());
+      auto const rty = traverse_expr(bin->get_rhs());
+      if (!llvm::isa<IntNType>(lty) || !llvm::isa<IntNType>(rty)) {
+        llvm::report_fatal_error("must be integer");
+      }
+      return new IntNType(32);
+    }
   }
   llvm_unreachable("not implemented");
 }

@@ -19,6 +19,7 @@ class TypeChecker {
     Type *traverse_deffn(DefFnAst *);
 
     Type *traverse_expr(Ast *);
+    Type *traverse_binary_expr(BinaryExprAst *);
     Type *traverse_block_expr(BlockExprAst *);
     Type *traverse_if_expr(IfExprAst *);
     Type *traverse_integer_literal(IntegerLiteralExpr *);
