@@ -105,8 +105,14 @@ TypeChecker::traverse_expr(Ast *expr) {
   if (auto const ife = dyn_cast<IfExprAst>(expr)) {
     return traverse_if_expr(ife);
   }
+  if (llvm::isa<IntegerLiteralExpr>(expr)) {
+    return new IntNType(32);
+  }
   if (auto const let = dyn_cast<LetStmtAst>(expr)) {
     return traverse_let_stmt(let);
+  }
+  if (auto const var = dyn_cast<VarRefExprAst>(expr)) {
+    return traverse_var_ref(var);
   }
   llvm_unreachable("not implemented");
 }
