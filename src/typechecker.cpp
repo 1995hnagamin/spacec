@@ -95,6 +95,9 @@ TypeChecker::traverse_expr(Ast *expr) {
   if (auto const block = dyn_cast<BlockExprAst>(expr)) {
     return traverse_block_expr(block);
   }
+  if (auto const call = dyn_cast<CallExprAst>(expr)) {
+    return traverse_call_expr(call);
+  }
   if (auto const ife = dyn_cast<IfExprAst>(expr)) {
     return traverse_if_expr(ife);
   }
@@ -151,6 +154,26 @@ TypeChecker::traverse_block_expr(BlockExprAst *block) {
   auto const ty = traverse_expr(block->get_nth_stmt(len-1));
   pimpl->pop_tyenv();
   return ty;
+}
+
+Type *
+TypeChecker::traverse_call_expr(CallExprAst *call) {
+  auto const callee = call->get_callee();
+  auto const fnty = llvm::dyn_cast<FunctionType>(traverse_expr(callee));
+  if (not fnty) {
+    llvm::report_fatal_error("must be function");
+  }
+  auto const arity = fnty->get_arity();
+  if (arity != call->get_nargs()) {
+    llvm::report_fatal_error("wrong number of arguments");
+  }
+  for (size_t i = 0; i < arity; ++i) {
+    auto const ty = traverse_expr(call->get_nth_arg(i));
+    if (not ty->equal(fnty->get_nth_param(i))) {
+      llvm::report_fatal_error("wrong argument");
+    }
+  }
+  return fnty->get_return_type();
 }
 
 Type *
