@@ -77,13 +77,17 @@ TypeChecker::traverse_deffn(DefFnAst *def) {
     pimpl->register_type(name, ty);
     params.push_back(ty);
   }
+  auto const retty = def->get_return_type();
+  auto const fnty = new FunctionType(retty, params);
+  pimpl->register_type(def->get_name(), fnty);
+
   auto const body = llvm::cast<BlockExprAst>(def->get_body());
-  auto const retty = traverse_block_expr(body);
-  if (not def->get_return_type()->equal(retty)) {
+  auto const bodyty = traverse_block_expr(body);
+  if (not retty->equal(bodyty)) {
     llvm::report_fatal_error("return type mismatch");
   }
   pimpl->pop_tyenv();
-  return new FunctionType(retty, params);
+  return fnty;
 }
 
 Type *
