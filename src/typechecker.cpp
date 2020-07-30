@@ -129,7 +129,9 @@ TypeChecker::traverse_binary_expr(BinaryExprAst *bin) {
       if (!llvm::isa<IntNType>(lty) || !llvm::isa<IntNType>(rty)) {
         llvm::report_fatal_error("must be integer");
       }
-      return new BoolType;
+      auto const bt = new BoolType;
+      bin->set_type(bt);
+      return bt;
     }
     case BO::Plus:
     case BO::Minus:
@@ -141,7 +143,9 @@ TypeChecker::traverse_binary_expr(BinaryExprAst *bin) {
       if (!llvm::isa<IntNType>(lty) || !llvm::isa<IntNType>(rty)) {
         llvm::report_fatal_error("must be integer");
       }
-      return new IntNType(32);
+      auto const it = new IntNType(32);
+      bin->set_type(it);
+      return it;
     }
   }
   llvm_unreachable("not implemented");
@@ -163,6 +167,7 @@ TypeChecker::traverse_block_expr(BlockExprAst *block) {
   }
   auto const ty = traverse_expr(block->get_nth_stmt(len-1));
   pimpl->pop_tyenv();
+  block->set_type(ty);
   return ty;
 }
 
@@ -183,6 +188,7 @@ TypeChecker::traverse_call_expr(CallExprAst *call) {
       llvm::report_fatal_error("wrong argument");
     }
   }
+  call->set_type(fnty->get_return_type());
   return fnty->get_return_type();
 }
 
@@ -197,6 +203,7 @@ TypeChecker::traverse_if_expr(IfExprAst *ife) {
   if (not thenty->equal(elsety)) {
     llvm::report_fatal_error("then and else must be the same type");
   }
+  ife->set_type(thenty);
   return thenty;
 }
 
@@ -205,10 +212,14 @@ TypeChecker::traverse_let_stmt(LetStmtAst *let) {
   auto const var = let->get_var_name();
   auto const ty = traverse_expr(let->get_init());
   pimpl->register_type(var, ty);
-  return new UnitType;
+  auto const unit = new UnitType;
+  let->set_type(unit);
+  return unit;
 }
 
 Type *
 TypeChecker::traverse_var_ref(VarRefExprAst *var) {
-  return pimpl->lookup_tyenv(var->get_name());
+  auto const ty = pimpl->lookup_tyenv(var->get_name());
+  var->set_type(ty);
+  return ty;
 }
