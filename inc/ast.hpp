@@ -8,6 +8,7 @@ class Ast {
       DefFn,
       BinaryExpr,
       BlockExpr,
+      BoolLiteral,
       CallExpr,
       IntegerLiteral,
       IfExpr,
@@ -137,6 +138,20 @@ class BlockExprAst : public ExprAst {
     }
   private:
     std::vector<Ast *> stmts;
+};
+
+class BoolLiteralExprAst : public ExprAst {
+  public:
+    BoolLiteralExprAst(bool v): ExprAst(AK::BoolLiteral), value(v) {
+    }
+    static bool classof(Ast const *a) {
+      return a->get_kind() == AK::BoolLiteral;
+    }
+    bool get_value() const {
+      return value;
+    }
+  private:
+    bool value;
 };
 
 class CallExprAst : public ExprAst {
