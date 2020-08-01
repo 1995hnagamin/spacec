@@ -65,6 +65,7 @@ TypeChecker::traverse_tunit(TranslationUnitAst *tunit) {
 
 Type *
 TypeChecker::traverse_decl(Ast *) {
+  llvm_unreachable("not implemented");
 }
 
 Type *
