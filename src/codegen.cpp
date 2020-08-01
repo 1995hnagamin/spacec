@@ -105,6 +105,9 @@ CodeGen::generate_expr(Ast *body) {
   if (auto const block = dyn_cast<BlockExprAst>(body)) {
     return generate_block_expr(block);
   }
+  if (auto const bl = dyn_cast<BoolLiteralExprAst>(body)) {
+    return generate_bool_literal(bl);
+  }
   if (auto const call = dyn_cast<CallExprAst>(body)) {
     return generate_call_expr(call);
   }
@@ -164,6 +167,12 @@ CodeGen::generate_block_expr(BlockExprAst *block) {
   BB = pimpl->thebuilder.GetInsertBlock();
   pimpl->pop_vartab();
   return seq.back();
+}
+
+llvm::Value *
+CodeGen::generate_bool_literal(BoolLiteralExprAst *bl) {
+  auto const type = llvm::Type::getInt1Ty(pimpl->thectxt);
+  return llvm::ConstantInt::get(type, bl->get_value());
 }
 
 llvm::Value *

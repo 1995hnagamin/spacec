@@ -167,8 +167,16 @@ Parser::parse_primary_expr() {
     case TokenType::CapitalName:
       {
         auto const head = tok->representation();
+        if (head == "False") {
+          tokens.advance();
+          return new BoolLiteralExprAst(false);
+        }
         if (head == "If") {
           return parse_if_expr();
+        }
+        if (head == "True") {
+          tokens.advance();
+          return new BoolLiteralExprAst(true);
         }
       }
     case TokenType::SmallName:

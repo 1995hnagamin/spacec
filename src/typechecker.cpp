@@ -99,6 +99,9 @@ TypeChecker::traverse_expr(Ast *expr) {
   if (auto const block = dyn_cast<BlockExprAst>(expr)) {
     return traverse_block_expr(block);
   }
+  if (auto const bl = dyn_cast<BoolLiteralExprAst>(expr)) {
+    return new BoolType;
+  }
   if (auto const call = dyn_cast<CallExprAst>(expr)) {
     return traverse_call_expr(call);
   }
