@@ -218,16 +218,14 @@ CodeGen::generate_function_definition(DefFnAst *def) {
 
 llvm::Value *
 CodeGen::generate_if_expr(IfExprAst *ife) {
-  auto const zero = pimpl->thebuilder.getInt1(false);
   auto const cond = generate_expr(ife->get_cond());
-  auto const flag = pimpl->thebuilder.CreateICmpNE(cond, zero);
 
   auto const func = pimpl->thebuilder.GetInsertBlock()->getParent();
 
   auto thenBB = llvm::BasicBlock::Create(pimpl->thectxt, "then", func);
   auto elseBB  = llvm::BasicBlock::Create(pimpl->thectxt, "else");
   auto const mergeBB = llvm::BasicBlock::Create(pimpl->thectxt, "ifcont");
-  pimpl->thebuilder.CreateCondBr(flag, thenBB, elseBB);
+  pimpl->thebuilder.CreateCondBr(cond, thenBB, elseBB);
 
   pimpl->thebuilder.SetInsertPoint(thenBB);
   auto const thenV = generate_expr(ife->get_then());
