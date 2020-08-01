@@ -8,6 +8,7 @@
 
 #include "ast.hpp"
 #include "binop.hpp"
+#include "type.hpp"
 #include "codegen.hpp"
 
 class CodeGenImpl {
@@ -62,7 +63,7 @@ llvm::AllocaInst *
 CodeGenImpl::register_auto_var(std::string const &name, llvm::Value *val) {
   auto const fn = thebuilder.GetInsertBlock()->getParent();
   llvm::IRBuilder<> entry(&fn->getEntryBlock(), fn->getEntryBlock().begin());
-  auto const alloca = entry.CreateAlloca(llvm::Type::getInt32Ty(thectxt), 0, name);
+  auto const alloca = entry.CreateAlloca(val->getType(), 0, name);
   register_val(name, alloca);
 
   return alloca;
@@ -94,6 +95,18 @@ CodeGen::execute(Ast *prog) {
 void
 CodeGen::display_llvm_ir(llvm::raw_ostream &s) {
   pimpl->themod.print(s, nullptr);
+}
+
+static llvm::Type *
+generate_llvm_type(CodeGenImpl *pimpl, Type *type) {
+  using llvm::dyn_cast;
+  if (auto const boolty = dyn_cast<BoolType>(type)) {
+    return llvm::IntegerType::getInt1Ty(pimpl->thectxt);
+  }
+  if (auto const intty = dyn_cast<IntNType>(type)) {
+    return llvm::IntegerType::get(pimpl->thectxt, intty->get_width());
+  }
+  llvm_unreachable("not implemented");
 }
 
 llvm::Value *
@@ -190,11 +203,13 @@ CodeGen::generate_call_expr(CallExprAst *call) {
 llvm::Value *
 CodeGen::generate_function_definition(DefFnAst *def) {
   auto const arity = def->get_arity();
-  std::vector<llvm::Type *> param_types(
-      arity,
-      llvm::Type::getInt32Ty(pimpl->thectxt));
+  std::vector<llvm::Type *> param_types;
+  for (size_t i = 0; i < arity; ++i) {
+    auto const type = generate_llvm_type(pimpl, def->get_nth_type(i));
+    param_types.push_back(type);
+  }
   llvm::FunctionType *fn_type = llvm::FunctionType::get(
-      llvm::Type::getInt32Ty(pimpl->thectxt),
+      generate_llvm_type(pimpl, def->get_return_type()),
       param_types,
       false /* not variadic */);
   llvm::Function *fn = llvm::Function::Create(
@@ -252,8 +267,9 @@ CodeGen::generate_if_expr(IfExprAst *ife) {
 
   func->getBasicBlockList().push_back(mergeBB);
   pimpl->thebuilder.SetInsertPoint(mergeBB);
+  auto const type = generate_llvm_type(pimpl, ife->get_type());
   auto phi = pimpl->thebuilder.CreatePHI(
-      llvm::Type::getInt32Ty(pimpl->thectxt), 2, "iftmp");
+      type, 2, "iftmp");
 
   phi->addIncoming(thenV, thenBB);
   phi->addIncoming(elseV, elseBB);

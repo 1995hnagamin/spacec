@@ -240,6 +240,19 @@ Parser::parse_let_stmt() {
 
 Type *
 Parser::parse_type() {
-  tokens.expect(TokenType::SmallName, "i32");
-  return new IntNType(32);
+  auto const tok = tokens.seek();
+  switch (tok->type()) {
+    case TokenType::SmallName:
+    {
+      tokens.expect(TokenType::SmallName, "i32");
+      return new IntNType(32);
+    }
+    case TokenType::CapitalName:
+    {
+      tokens.expect(TokenType::CapitalName, "Bool");
+      return new BoolType;
+    }
+    default:
+      llvm_unreachable("not implemented");
+  }
 }
