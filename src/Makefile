@@ -7,7 +7,8 @@ all: $(TARGET)
 LLVM_CONFIG = llvm-config
 INCLUDES = -I../inc \
 	$(shell $(LLVM_CONFIG) --cxxflags)
-CXXFLAGS = -std=c++14 \
+override CXXFLAGS += \
+	-std=c++14 \
 	-Wall -Wextra -Wpedantic \
 	-Wno-unused-parameter \
 	$(INCLUDES)
