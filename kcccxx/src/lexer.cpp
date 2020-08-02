@@ -43,7 +43,8 @@ int Token::get_as_integer() const {
 }
 
 TokenStream::TokenStream(const std::vector<Token>& tokens):
-  stream(tokens)
+  stream(tokens),
+  idx(0)
 {}
 
 Token *
