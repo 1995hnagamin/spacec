@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-TARGET = spccc
+TARGET = kccc++
 all: $(TARGET)
 
 
@@ -14,7 +14,7 @@ override CXXFLAGS += \
 	$(INCLUDES)
 LDFLAGS = -lc++
 LDLIBS = $(shell $(LLVM_CONFIG) --ldflags --libs --system-libs)
-OBJS = spccc.o \
+OBJS = kccc++.o \
 	ast.o \
 	binop.o \
 	codegen.o \
