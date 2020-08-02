@@ -10,8 +10,8 @@
 #include "parser.hpp"
 #include "typechecker.hpp"
 
-void show_help() {
-  std::cout << "usage: spccc <filename>" << std::endl;
+void show_help(std::string const &exec) {
+  std::cout << "usage: " << exec << " <filename>" << std::endl;
 }
 
 char const *
@@ -40,7 +40,7 @@ void show_tokens(std::vector<Token> const &tokens) {
 
 int main(int argc, char **argv) {
   if (argc < 2) {
-    show_help();
+    show_help(argv[0]);
     return 0;
   }
 

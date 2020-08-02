@@ -33,7 +33,7 @@ lexer.o: ../inc/lexer.hpp
 
 parser.o: ../inc/ast.hpp ../inc/lexer.hpp ../inc/parser.hpp
 
-spccc.o: ../inc/ast.hpp ../inc/lexer.hpp ../inc/parser.hpp
+kccc++.o: ../inc/ast.hpp ../inc/lexer.hpp ../inc/parser.hpp
 
 clean:
 	rm -rf $(TARGET) $(OBJS)
