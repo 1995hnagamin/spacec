@@ -1,5 +1,22 @@
+DefFn and(a: Bool, b: Bool) -> Bool {
+	If a Then
+		If b Then True Else False
+	Else
+		False
+}
+
+DefFn or(a: Bool, b: Bool) -> Bool {
+	If a Then True
+	Else If b Then True
+	Else False
+}
+
+DefFn lt1(n: i32) -> Bool {
+	n < 1
+}
+
 DefFn fib(n: i32) -> i32 {
-	If n < 1 Then 0
+	If lt1(n) Then 0
 	Else If n = 1 Then 1
 	Else {
 		Let a = fib(n-1);

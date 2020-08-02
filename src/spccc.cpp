@@ -8,6 +8,7 @@
 #include "codegen.hpp"
 #include "lexer.hpp"
 #include "parser.hpp"
+#include "typechecker.hpp"
 
 void show_help() {
   std::cout << "usage: spccc <filename>" << std::endl;
@@ -46,6 +47,9 @@ int main(int argc, char **argv) {
   auto const tokens = LexicalAnalysis(argv[1]);
   Parser parser(tokens);
   auto const tunit = parser.parse_top_level_decl();
+
+  TypeChecker tc;
+  tc.traverse_tunit(tunit);
 
   CodeGen codegen("null");
   codegen.execute(tunit);

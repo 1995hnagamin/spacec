@@ -11,7 +11,7 @@
 #include "parser.hpp"
 #include "type.hpp"
 
-Ast *
+TranslationUnitAst *
 Parser::parse_top_level_decl() {
   std::vector<Ast *> funcs;
   while (tokens.seek()->representation() == "DefFn") {
@@ -167,8 +167,16 @@ Parser::parse_primary_expr() {
     case TokenType::CapitalName:
       {
         auto const head = tok->representation();
+        if (head == "False") {
+          tokens.advance();
+          return new BoolLiteralExprAst(false);
+        }
         if (head == "If") {
           return parse_if_expr();
+        }
+        if (head == "True") {
+          tokens.advance();
+          return new BoolLiteralExprAst(true);
         }
       }
     case TokenType::SmallName:
@@ -232,6 +240,19 @@ Parser::parse_let_stmt() {
 
 Type *
 Parser::parse_type() {
-  tokens.expect(TokenType::SmallName, "i32");
-  return new IntNType(32);
+  auto const tok = tokens.seek();
+  switch (tok->type()) {
+    case TokenType::SmallName:
+    {
+      tokens.expect(TokenType::SmallName, "i32");
+      return new IntNType(32);
+    }
+    case TokenType::CapitalName:
+    {
+      tokens.expect(TokenType::CapitalName, "Bool");
+      return new BoolType;
+    }
+    default:
+      llvm_unreachable("not implemented");
+  }
 }

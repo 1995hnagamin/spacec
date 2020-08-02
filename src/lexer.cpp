@@ -51,6 +51,11 @@ TokenStream::get() {
   return &(stream[idx++]);
 }
 
+void
+TokenStream::advance() {
+  get();
+}
+
 Token *
 TokenStream::seek() {
   return &(stream[idx]);

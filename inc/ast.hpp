@@ -4,14 +4,15 @@
 class Ast {
   public:
     enum class AK {
+      TranslationUnit,
       DefFn,
       BinaryExpr,
       BlockExpr,
+      BoolLiteral,
       CallExpr,
       IntegerLiteral,
       IfExpr,
       LetStmt,
-      TranslationUnit,
       VarRefExpr,
     };
 
@@ -71,11 +72,39 @@ class DefFnAst : public Ast {
     Ast *body;
 };
 
+class ExprAst : public Ast {
+  public:
+    ExprAst() = delete;
+    ExprAst(ExprAst const &) = delete;
+    ExprAst(ExprAst &&) = delete;
+    ExprAst &operator=(ExprAst const &) = delete;
+    ExprAst &operator=(ExprAst &&) = delete;
+    virtual ~ExprAst() = 0;
+
+    explicit ExprAst(AK kind): Ast(kind) {
+    }
+
+    static bool classof(Ast const *a) {
+      auto constexpr lb = static_cast<int>(AK::BinaryExpr);
+      auto constexpr ub = static_cast<int>(AK::VarRefExpr);
+
+      auto const num = static_cast<int>(a->get_kind());
+      return lb <= num && num <= ub;
+    }
+
+    void set_type(Type *);
+    Type *get_type() const;
+
+  private:
+    Type *type;
+};
+
 class BinOp;
 
-class BinaryExprAst : public Ast {
+class BinaryExprAst : public ExprAst {
   public:
-    BinaryExprAst(BinOp *binop, Ast *left, Ast *right): Ast(AK::BinaryExpr), op(binop), lhs(left), rhs(right) {}
+    BinaryExprAst(BinOp *binop, Ast *left, Ast *right):
+      ExprAst(AK::BinaryExpr), op(binop), lhs(left), rhs(right) {}
     static bool classof(Ast const *a) {
       return a->get_kind() == AK::BinaryExpr;
     }
@@ -94,9 +123,10 @@ class BinaryExprAst : public Ast {
     Ast *rhs;
 };
 
-class BlockExprAst : public Ast {
+class BlockExprAst : public ExprAst {
   public:
-    BlockExprAst(std::vector<Ast *> const &children): Ast(AK::BlockExpr), stmts(children) {}
+    BlockExprAst(std::vector<Ast *> const &children):
+      ExprAst(AK::BlockExpr), stmts(children) {}
     static bool classof(Ast const *a) {
       return a->get_kind() == AK::BlockExpr;
     }
@@ -110,9 +140,24 @@ class BlockExprAst : public Ast {
     std::vector<Ast *> stmts;
 };
 
-class CallExprAst : public Ast {
+class BoolLiteralExprAst : public ExprAst {
   public:
-    CallExprAst(Ast *func, std::vector<Ast *> const &arglist): Ast(AK::CallExpr), callee(func), args(arglist) {}
+    BoolLiteralExprAst(bool v): ExprAst(AK::BoolLiteral), value(v) {
+    }
+    static bool classof(Ast const *a) {
+      return a->get_kind() == AK::BoolLiteral;
+    }
+    bool get_value() const {
+      return value;
+    }
+  private:
+    bool value;
+};
+
+class CallExprAst : public ExprAst {
+  public:
+    CallExprAst(Ast *func, std::vector<Ast *> const &arglist):
+      ExprAst(AK::CallExpr), callee(func), args(arglist) {}
     static bool classof(Ast const *a) {
       return a->get_kind() == AK::CallExpr;
     }
@@ -130,9 +175,10 @@ class CallExprAst : public Ast {
     std::vector<Ast *> args;
 };
 
-class IntegerLiteralExpr : public Ast {
+class IntegerLiteralExpr : public ExprAst {
   public:
-    IntegerLiteralExpr(int v): Ast(AK::IntegerLiteral), val(v) {
+    IntegerLiteralExpr(int v):
+      ExprAst(AK::IntegerLiteral), val(v) {
     }
     static bool classof(Ast const *a) {
       return a->get_kind() == AK::IntegerLiteral;
@@ -145,10 +191,10 @@ class IntegerLiteralExpr : public Ast {
     int val;
 };
 
-class IfExprAst : public Ast {
+class IfExprAst : public ExprAst {
   public:
     IfExprAst(Ast *c, Ast *th, Ast *el):
-      Ast(AK::IfExpr), cond(c), then(th), els(el)
+      ExprAst(AK::IfExpr), cond(c), then(th), els(el)
     {
     }
     static bool classof(Ast const *a) {
@@ -169,9 +215,10 @@ class IfExprAst : public Ast {
     Ast *els;
 };
 
-class LetStmtAst : public Ast {
+class LetStmtAst : public ExprAst {
   public:
-    LetStmtAst(std::string const &n, Ast *r): Ast(AK::LetStmt), name(n), rhs(r) {
+    LetStmtAst(std::string const &n, Ast *r):
+      ExprAst(AK::LetStmt), name(n), rhs(r) {
     }
     static bool classof(Ast const *a) {
       return a->get_kind() == AK::LetStmt;
@@ -204,9 +251,10 @@ class TranslationUnitAst : public Ast {
     std::vector<Ast *> funcs;
 };
 
-class VarRefExprAst : public Ast {
+class VarRefExprAst : public ExprAst {
   public:
-    VarRefExprAst(std::string const &n): Ast(AK::VarRefExpr), name(n) {
+    VarRefExprAst(std::string const &n):
+      ExprAst(AK::VarRefExpr), name(n) {
     }
     static bool classof(Ast const *a) {
       return a->get_kind() == AK::VarRefExpr;
