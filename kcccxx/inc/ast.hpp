@@ -1,6 +1,9 @@
 #ifndef AST_HPP
 #define AST_HPP
 
+#include <string>
+#include <vector>
+
 class Ast {
   public:
     enum class AK {

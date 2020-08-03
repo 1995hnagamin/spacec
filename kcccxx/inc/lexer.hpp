@@ -1,6 +1,10 @@
 #ifndef LEXER_HPP
 #define LEXER_HPP
 
+#include <stdexcept>
+#include <string>
+#include <vector>
+
 enum class TokenType {
   SmallName,
   CapitalName,
