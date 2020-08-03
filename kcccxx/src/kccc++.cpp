@@ -45,8 +45,9 @@ int main(int argc, char **argv) {
     show_help();
     return 0;
   }
+  auto const filename = static_cast<std::string>(argv[1]);
 
-  auto const tokens = LexicalAnalysis(argv[1]);
+  auto const tokens = LexicalAnalysis(filename);
   Parser parser(tokens);
   auto const tunit = parser.parse_top_level_decl();
 
@@ -54,7 +55,7 @@ int main(int argc, char **argv) {
   tc.traverse_tunit(tunit);
 
   llvm::LLVMContext ctxt;
-  llvm::Module mod("null", ctxt);
+  llvm::Module mod(filename, ctxt);
   llvm::IRBuilder<> builder(ctxt);
 
   CodeGen codegen(ctxt, mod, builder);
