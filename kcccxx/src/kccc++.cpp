@@ -4,6 +4,7 @@
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Value.h"
+#include "llvm/Support/raw_ostream.h"
 
 #include "ast.hpp"
 #include "codegen.hpp"
@@ -58,6 +59,7 @@ int main(int argc, char **argv) {
 
   CodeGen codegen(ctxt, mod, builder);
   codegen.execute(tunit);
+  mod.print(llvm::outs(), nullptr);
 
   return 0;
 }

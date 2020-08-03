@@ -91,7 +91,6 @@ CodeGen::execute(Ast *prog) {
 
   pimpl->pop_vartab();
 
-  pimpl->themod.print(llvm::outs(), nullptr);
   return true;
 }
 
