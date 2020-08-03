@@ -10,7 +10,8 @@ class CodeGenImpl;
 
 class CodeGen {
   public:
-    CodeGen(std::string const &module_id);
+    CodeGen(llvm::LLVMContext &ctxt,
+        llvm::Module &mod, llvm::IRBuilder<> &builder);
     ~CodeGen();
     bool execute(Ast *translation_unit);
 
@@ -24,8 +25,6 @@ class CodeGen {
     llvm::Value *generate_integer_literal(IntegerLiteralExpr *);
     llvm::Value *generate_let_stmt(LetStmtAst *);
     llvm::Value *generate_var_ref(VarRefExprAst *);
-
-    void display_llvm_ir(llvm::raw_ostream &);
 
   private:
     CodeGenImpl *pimpl;

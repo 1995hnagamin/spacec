@@ -13,15 +13,16 @@
 
 class CodeGenImpl {
   public:
-    CodeGenImpl(std::string const &modid):
-      thectxt(),
-      themod(modid, thectxt),
-      thebuilder(thectxt) {
+    CodeGenImpl(llvm::LLVMContext &ctxt,
+        llvm::Module &mod, llvm::IRBuilder<> &builder):
+      thectxt(ctxt),
+      themod(mod),
+      thebuilder(builder) {
     }
 
-    llvm::LLVMContext thectxt;
-    llvm::Module themod;
-    llvm::IRBuilder<> thebuilder;
+    llvm::LLVMContext &thectxt;
+    llvm::Module &themod;
+    llvm::IRBuilder<> &thebuilder;
 
     using varmap = std::map<std::string, llvm::Value *>;
     std::vector<varmap> vartab;
@@ -69,8 +70,9 @@ CodeGenImpl::register_auto_var(std::string const &name, llvm::Value *val) {
   return alloca;
 }
 
-CodeGen::CodeGen(std::string const &modid):
-  pimpl(new CodeGenImpl(modid)) {
+CodeGen::CodeGen(llvm::LLVMContext &ctxt,
+  llvm::Module &mod, llvm::IRBuilder<> &builder):
+  pimpl(new CodeGenImpl(ctxt, mod, builder)) {
 }
 
 CodeGen::~CodeGen() {
@@ -90,11 +92,6 @@ CodeGen::execute(Ast *prog) {
   pimpl->pop_vartab();
 
   return true;
-}
-
-void
-CodeGen::display_llvm_ir(llvm::raw_ostream &s) {
-  pimpl->themod.print(s, nullptr);
 }
 
 static llvm::Type *

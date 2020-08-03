@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/Module.h"
 #include "llvm/IR/Value.h"
 #include "llvm/Support/raw_ostream.h"
 
@@ -43,18 +45,22 @@ int main(int argc, char **argv) {
     show_help(argv[0]);
     return 0;
   }
+  auto const filename = static_cast<std::string>(argv[1]);
 
-  auto const tokens = LexicalAnalysis(argv[1]);
+  auto const tokens = LexicalAnalysis(filename);
   Parser parser(tokens);
   auto const tunit = parser.parse_top_level_decl();
 
   TypeChecker tc;
   tc.traverse_tunit(tunit);
 
-  CodeGen codegen("null");
-  codegen.execute(tunit);
+  llvm::LLVMContext ctxt;
+  llvm::Module mod(filename, ctxt);
+  llvm::IRBuilder<> builder(ctxt);
 
-  codegen.display_llvm_ir(llvm::outs());
+  CodeGen codegen(ctxt, mod, builder);
+  codegen.execute(tunit);
+  mod.print(llvm::outs(), nullptr);
 
   return 0;
 }
