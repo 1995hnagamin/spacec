@@ -1,7 +1,7 @@
-#include <cstdlib>
-#include <vector>
 #include "type.hpp"
 #include "llvm/Support/Casting.h"
+#include <cstdlib>
+#include <vector>
 
 Type::~Type() {
 }

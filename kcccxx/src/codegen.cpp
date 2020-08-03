@@ -8,29 +8,26 @@
 
 #include "ast.hpp"
 #include "binop.hpp"
-#include "type.hpp"
 #include "codegen.hpp"
+#include "type.hpp"
 
 class CodeGenImpl {
-  public:
-    CodeGenImpl(llvm::LLVMContext &ctxt,
-        llvm::Module &mod, llvm::IRBuilder<> &builder):
-      thectxt(ctxt),
-      themod(mod),
-      thebuilder(builder) {
-    }
+public:
+  CodeGenImpl(llvm::LLVMContext &ctxt, llvm::Module &mod, llvm::IRBuilder<> &builder):
+      thectxt(ctxt), themod(mod), thebuilder(builder) {
+  }
 
-    llvm::LLVMContext &thectxt;
-    llvm::Module &themod;
-    llvm::IRBuilder<> &thebuilder;
+  llvm::LLVMContext &thectxt;
+  llvm::Module &themod;
+  llvm::IRBuilder<> &thebuilder;
 
-    using varmap = std::map<std::string, llvm::Value *>;
-    std::vector<varmap> vartab;
-    llvm::Value *lookup_vartab(std::string const &name) const;
-    void push_vartab();
-    void pop_vartab();
-    void register_val(std::string const &name, llvm::Value *val);
-    llvm::AllocaInst *register_auto_var(std::string const &name, llvm::Value *val);
+  using varmap = std::map<std::string, llvm::Value *>;
+  std::vector<varmap> vartab;
+  llvm::Value *lookup_vartab(std::string const &name) const;
+  void push_vartab();
+  void pop_vartab();
+  void register_val(std::string const &name, llvm::Value *val);
+  llvm::AllocaInst *register_auto_var(std::string const &name, llvm::Value *val);
 };
 
 llvm::Value *
@@ -70,9 +67,8 @@ CodeGenImpl::register_auto_var(std::string const &name, llvm::Value *val) {
   return alloca;
 }
 
-CodeGen::CodeGen(llvm::LLVMContext &ctxt,
-  llvm::Module &mod, llvm::IRBuilder<> &builder):
-  pimpl(new CodeGenImpl(ctxt, mod, builder)) {
+CodeGen::CodeGen(llvm::LLVMContext &ctxt, llvm::Module &mod, llvm::IRBuilder<> &builder):
+    pimpl(new CodeGenImpl(ctxt, mod, builder)) {
 }
 
 CodeGen::~CodeGen() {
@@ -206,14 +202,9 @@ CodeGen::generate_function_definition(DefFnAst *def) {
     param_types.push_back(type);
   }
   llvm::FunctionType *fn_type = llvm::FunctionType::get(
-      generate_llvm_type(pimpl, def->get_return_type()),
-      param_types,
-      false /* not variadic */);
+    generate_llvm_type(pimpl, def->get_return_type()), param_types, false /* not variadic */);
   llvm::Function *fn = llvm::Function::Create(
-      fn_type,
-      llvm::Function::ExternalLinkage,
-      llvm::Twine(def->get_name()),
-      pimpl->themod);
+    fn_type, llvm::Function::ExternalLinkage, llvm::Twine(def->get_name()), pimpl->themod);
   pimpl->register_val(def->get_name(), fn);
 
   llvm::BasicBlock *BB = llvm::BasicBlock::Create(pimpl->thectxt, "entry", fn);
@@ -236,7 +227,6 @@ CodeGen::generate_function_definition(DefFnAst *def) {
   return fn;
 }
 
-
 llvm::Value *
 CodeGen::generate_if_expr(IfExprAst *ife) {
   auto const cond = generate_expr(ife->get_cond());
@@ -244,7 +234,7 @@ CodeGen::generate_if_expr(IfExprAst *ife) {
   auto const func = pimpl->thebuilder.GetInsertBlock()->getParent();
 
   auto thenBB = llvm::BasicBlock::Create(pimpl->thectxt, "then", func);
-  auto elseBB  = llvm::BasicBlock::Create(pimpl->thectxt, "else");
+  auto elseBB = llvm::BasicBlock::Create(pimpl->thectxt, "else");
   auto const mergeBB = llvm::BasicBlock::Create(pimpl->thectxt, "ifcont");
   pimpl->thebuilder.CreateCondBr(cond, thenBB, elseBB);
 
@@ -263,8 +253,7 @@ CodeGen::generate_if_expr(IfExprAst *ife) {
   func->getBasicBlockList().push_back(mergeBB);
   pimpl->thebuilder.SetInsertPoint(mergeBB);
   auto const type = generate_llvm_type(pimpl, ife->get_type());
-  auto phi = pimpl->thebuilder.CreatePHI(
-      type, 2, "iftmp");
+  auto phi = pimpl->thebuilder.CreatePHI(type, 2, "iftmp");
 
   phi->addIncoming(thenV, thenBB);
   phi->addIncoming(elseV, elseBB);

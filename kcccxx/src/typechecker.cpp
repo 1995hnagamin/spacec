@@ -1,24 +1,24 @@
-#include <map>
-#include <iostream>
-#include <string>
-#include <vector>
-#include "llvm/Support/Casting.h"
-#include "llvm/Support/ErrorHandling.h"
 #include "ast.hpp"
 #include "binop.hpp"
 #include "type.hpp"
+#include "llvm/Support/Casting.h"
+#include "llvm/Support/ErrorHandling.h"
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
 
 #include "typechecker.hpp"
 
 class TypeCheckerImpl {
-  public:
-    Type *lookup_tyenv(std::string const &name) const;
-    void push_tyenv();
-    void pop_tyenv();
-    void register_type(std::string const &name, Type *ty);
+public:
+  Type *lookup_tyenv(std::string const &name) const;
+  void push_tyenv();
+  void pop_tyenv();
+  void register_type(std::string const &name, Type *ty);
 
-    using tymap = std::map<std::string, Type *>;
-    std::vector<tymap> tyenv;
+  using tymap = std::map<std::string, Type *>;
+  std::vector<tymap> tyenv;
 };
 
 Type *
@@ -126,8 +126,7 @@ TypeChecker::traverse_binary_expr(BinaryExprAst *bin) {
   switch (bin->get_op()->get_kind()) {
     case BO::Eq:
     case BO::Lt:
-    case BO::Gt:
-    {
+    case BO::Gt: {
       auto const lty = traverse_expr(bin->get_lhs());
       auto const rty = traverse_expr(bin->get_rhs());
       if (!llvm::isa<IntNType>(lty) || !llvm::isa<IntNType>(rty)) {
@@ -140,8 +139,7 @@ TypeChecker::traverse_binary_expr(BinaryExprAst *bin) {
     case BO::Plus:
     case BO::Minus:
     case BO::Mult:
-    case BO::Div:
-    {
+    case BO::Div: {
       auto const lty = traverse_expr(bin->get_lhs());
       auto const rty = traverse_expr(bin->get_rhs());
       if (!llvm::isa<IntNType>(lty) || !llvm::isa<IntNType>(rty)) {
@@ -169,7 +167,7 @@ TypeChecker::traverse_block_expr(BlockExprAst *block) {
       llvm::report_fatal_error("must be unit");
     }
   }
-  auto const ty = traverse_expr(block->get_nth_stmt(len-1));
+  auto const ty = traverse_expr(block->get_nth_stmt(len - 1));
   pimpl->pop_tyenv();
   block->set_type(ty);
   return ty;

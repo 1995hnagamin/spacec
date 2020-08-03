@@ -80,7 +80,7 @@ Parser::parse_expr() {
 }
 
 static bool
-is_binop_token(Token* tok) {
+is_binop_token(Token *tok) {
   return tok->type() == TokenType::Symbol;
 }
 
@@ -122,8 +122,10 @@ Parser::parse_binary_expr_seq() {
         break;
       }
       opstk.pop(); // == t
-      auto const rhs = outstk.top(); outstk.pop();
-      auto const lhs = outstk.top(); outstk.pop();
+      auto const rhs = outstk.top();
+      outstk.pop();
+      auto const lhs = outstk.top();
+      outstk.pop();
       outstk.push(t->create(lhs, rhs));
     }
     opstk.push(op);
@@ -132,9 +134,12 @@ Parser::parse_binary_expr_seq() {
     outstk.push(next);
   }
   while (!opstk.empty()) {
-    auto const op = opstk.top(); opstk.pop();
-    auto const rhs = outstk.top(); outstk.pop();
-    auto const lhs = outstk.top(); outstk.pop();
+    auto const op = opstk.top();
+    opstk.pop();
+    auto const rhs = outstk.top();
+    outstk.pop();
+    auto const lhs = outstk.top();
+    outstk.pop();
     outstk.push(op->create(lhs, rhs));
   }
   assert(outstk.size() == 1);
@@ -155,30 +160,28 @@ Parser::parse_primary_expr() {
   switch (tok->type()) {
     case TokenType::Digit:
       return parse_integer_literal();
-    case TokenType::LParen:
-      {
-        tokens.expect(TokenType::LParen);
-        auto const expr = parse_expr();
-        tokens.expect(TokenType::RParen);
-        return expr;
-      }
+    case TokenType::LParen: {
+      tokens.expect(TokenType::LParen);
+      auto const expr = parse_expr();
+      tokens.expect(TokenType::RParen);
+      return expr;
+    }
     case TokenType::LBrace:
       return parse_block_expr();
-    case TokenType::CapitalName:
-      {
-        auto const head = tok->representation();
-        if (head == "False") {
-          tokens.advance();
-          return new BoolLiteralExprAst(false);
-        }
-        if (head == "If") {
-          return parse_if_expr();
-        }
-        if (head == "True") {
-          tokens.advance();
-          return new BoolLiteralExprAst(true);
-        }
+    case TokenType::CapitalName: {
+      auto const head = tok->representation();
+      if (head == "False") {
+        tokens.advance();
+        return new BoolLiteralExprAst(false);
       }
+      if (head == "If") {
+        return parse_if_expr();
+      }
+      if (head == "True") {
+        tokens.advance();
+        return new BoolLiteralExprAst(true);
+      }
+    }
     case TokenType::SmallName:
       return parse_ident_expr();
     default:
@@ -242,13 +245,11 @@ Type *
 Parser::parse_type() {
   auto const tok = tokens.seek();
   switch (tok->type()) {
-    case TokenType::SmallName:
-    {
+    case TokenType::SmallName: {
       tokens.expect(TokenType::SmallName, "i32");
       return new IntNType(32);
     }
-    case TokenType::CapitalName:
-    {
+    case TokenType::CapitalName: {
       tokens.expect(TokenType::CapitalName, "Bool");
       return new BoolType;
     }

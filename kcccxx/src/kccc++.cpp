@@ -12,7 +12,8 @@
 #include "parser.hpp"
 #include "typechecker.hpp"
 
-void show_help(std::string const &exec) {
+void
+show_help(std::string const &exec) {
   std::cout << "usage: " << exec << " <filename>" << std::endl;
 }
 
@@ -32,15 +33,15 @@ string_of_tokentype(TokenType t) {
   }
 }
 
-void show_tokens(std::vector<Token> const &tokens) {
+void
+show_tokens(std::vector<Token> const &tokens) {
   for (auto &&token : tokens) {
-    std::cerr << string_of_tokentype(token.type()) << ": "
-      << token.representation()
-      << std::endl;
+    std::cerr << string_of_tokentype(token.type()) << ": " << token.representation() << std::endl;
   }
 }
 
-int main(int argc, char **argv) {
+int
+main(int argc, char **argv) {
   if (argc < 2) {
     show_help(argv[0]);
     return 0;

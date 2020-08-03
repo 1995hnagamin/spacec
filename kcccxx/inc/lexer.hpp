@@ -22,36 +22,37 @@ enum class TokenType {
 };
 
 class BadGetterException : std::domain_error {
-  public:
-    BadGetterException(std::string const & cause);
+public:
+  BadGetterException(std::string const &cause);
 };
 
 class Token {
-  public:
-    Token(TokenType type, std::string const & literal);
-    TokenType type() const;
-    std::string representation() const;
-    std::string get_as_name() const;
-    int get_as_integer() const;
-  private:
-    TokenType token_type;
-    std::string literal;
+public:
+  Token(TokenType type, std::string const &literal);
+  TokenType type() const;
+  std::string representation() const;
+  std::string get_as_name() const;
+  int get_as_integer() const;
+
+private:
+  TokenType token_type;
+  std::string literal;
 };
 
 class TokenStream {
-  public:
-    TokenStream(std::vector<Token> const & tokens);
-    Token *get();
-    void advance();
-    Token *seek();
-    Token *expect(TokenType);
-    Token *expect(TokenType, char const *);
-  private:
-    std::vector<Token> stream;
-    size_t idx;
+public:
+  TokenStream(std::vector<Token> const &tokens);
+  Token *get();
+  void advance();
+  Token *seek();
+  Token *expect(TokenType);
+  Token *expect(TokenType, char const *);
+
+private:
+  std::vector<Token> stream;
+  size_t idx;
 };
 
-std::vector<Token>
-LexicalAnalysis(std::string const &filename);
+std::vector<Token> LexicalAnalysis(std::string const &filename);
 
 #endif /* !LEXER_HPP */

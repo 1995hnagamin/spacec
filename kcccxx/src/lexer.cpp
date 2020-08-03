@@ -1,29 +1,30 @@
+#include "lexer.hpp"
 #include <cassert>
 #include <cctype>
+#include <exception>
 #include <fstream>
 #include <string>
 #include <vector>
-#include <exception>
-#include "lexer.hpp"
 
-BadGetterException::BadGetterException(std::string const & cause):
-  std::domain_error(cause)
-{}
+BadGetterException::BadGetterException(std::string const &cause): std::domain_error(cause) {
+}
 
-Token::Token(TokenType type, std::string const & token_literal):
-  token_type(type),
-  literal(token_literal)
-{}
+Token::Token(TokenType type, std::string const &token_literal):
+    token_type(type), literal(token_literal) {
+}
 
-TokenType Token::type() const {
+TokenType
+Token::type() const {
   return token_type;
 }
 
-std::string Token::representation() const {
+std::string
+Token::representation() const {
   return literal;
 }
 
-std::string Token::get_as_name() const {
+std::string
+Token::get_as_name() const {
   switch (token_type) {
     case TokenType::SmallName:
     case TokenType::CapitalName:
@@ -33,7 +34,8 @@ std::string Token::get_as_name() const {
   }
 }
 
-int Token::get_as_integer() const {
+int
+Token::get_as_integer() const {
   switch (token_type) {
     case TokenType::Digit:
       return std::stoi(literal);
@@ -42,10 +44,8 @@ int Token::get_as_integer() const {
   }
 }
 
-TokenStream::TokenStream(const std::vector<Token>& tokens):
-  stream(tokens),
-  idx(0)
-{}
+TokenStream::TokenStream(const std::vector<Token> &tokens): stream(tokens), idx(0) {
+}
 
 Token *
 TokenStream::get() {
@@ -78,7 +78,8 @@ TokenStream::expect(TokenType type, char const *repr) {
 }
 
 struct char_stream {
-  explicit char_stream() {}
+  explicit char_stream() {
+  }
   bool open(std::string const &filename) {
     ifs.open(filename);
     if (!ifs) {
@@ -142,8 +143,7 @@ LexicalAnalysis(std::string const &filename) {
       case ';':
         tokens.emplace_back(TokenType::Semicolon, ";");
         continue;
-      default:
-        ; // do nothing
+      default:; // do nothing
     }
     if (std::isdigit(c)) {
       std::string cur_token;

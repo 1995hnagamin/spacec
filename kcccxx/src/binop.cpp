@@ -5,8 +5,8 @@
 
 #include "binop.hpp"
 
-static
-bool bo_higher_than(BO lhs, BO rhs) {
+static bool
+bo_higher_than(BO lhs, BO rhs) {
   // clang-format off
   static bool constexpr gt[7][7] = {
     { 0, 0, 0, 0, 1, 1, 1, },
@@ -23,8 +23,8 @@ bool bo_higher_than(BO lhs, BO rhs) {
   return gt[l][r];
 }
 
-static
-bool bo_same(BO lhs, BO rhs) {
+static bool
+bo_same(BO lhs, BO rhs) {
   // clang-format off
   static int constexpr group[] = {
     1, 1,
@@ -74,7 +74,5 @@ bool
 comparable(BinOp const &lhs, BinOp const &rhs) {
   auto const l = lhs.get_kind();
   auto const r = rhs.get_kind();
-  return bo_higher_than(l, r)
-          || bo_higher_than(r, l)
-          || bo_same(l, r);
+  return bo_higher_than(l, r) || bo_higher_than(r, l) || bo_same(l, r);
 }
