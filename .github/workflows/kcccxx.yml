@@ -1,0 +1,14 @@
+name: Build kccc++
+
+on: [push, pull_request]
+
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    container: hnagamin/llvm-10.0:latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: make
+      run: make CXX=clang-10
+      working-directory: ./kcccxx/src
