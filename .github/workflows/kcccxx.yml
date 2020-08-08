@@ -9,6 +9,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Install build-essential
+      run: sudo apt install build-essential
     - name: make
       run: make CXX=clang-10
       working-directory: ./kcccxx/src
