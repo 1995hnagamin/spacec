@@ -1,0 +1,20 @@
+name: Build kccc++
+
+on: [push, pull_request]
+
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    container: hnagamin/llvm-10.0:latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install build-essential
+      run: apt install build-essential -y
+    - name: Create build directory
+      run: mkdir kcccxx/build
+    - name: cmake
+      run: |
+        cmake ..
+        cmake --build .
+      working-directory: ./kcccxx/build
