@@ -11,6 +11,14 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install build-essential
       run: apt install build-essential -y
+
+    - name: clang-format
+      run: |
+        for file in $(find src inc -name '*.[ch]pp'); do
+          diff -u $file <(clang-format $file) || exit 1
+        done
+      working-directory: ./kcccxx
+
     - name: Create build directory
       run: mkdir kcccxx/build
     - name: cmake
