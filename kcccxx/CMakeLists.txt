@@ -19,10 +19,17 @@ include_directories(
     ${LLVM_INCLUDE_DIRS}
 )
 
+link_directories(
+    ${LLVM_LIBRARY_DIRS}
+)
+
+set(LLVM_LINK_COMPONENTS
+    Core
+)
+
 add_definitions(${LLVM_DEFINITIONS})
 
-add_llvm_executable(
-    kccc++
+add_llvm_executable(kccc++
     ${SRC_DIR}/kccc++.cpp
     ${SRC_DIR}/ast.cpp
     ${SRC_DIR}/binop.cpp
