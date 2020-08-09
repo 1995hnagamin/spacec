@@ -1,7 +1,7 @@
 #include "lexer.hpp"
+#include "llvm/Support/ErrorHandling.h"
 #include <cassert>
 #include <cctype>
-#include <exception>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -30,7 +30,7 @@ Token::get_as_name() const {
     case TokenType::CapitalName:
       return literal;
     default:
-      throw BadGetterException("Not a name");
+      llvm_unreachable("Not a name");
   }
 }
 
@@ -40,7 +40,7 @@ Token::get_as_integer() const {
     case TokenType::Digit:
       return std::stoi(literal);
     default:
-      throw BadGetterException("Not an integer");
+      llvm_unreachable("Not an integer");
   }
 }
 
