@@ -1,6 +1,14 @@
 name: Build kccc++
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - 'kcccxx/**'
+      - '.github/workflows/kcccxx.yml'
+  pull_request:
+    paths:
+      - 'kcccxx/**'
+      - '.github/workflows/kcccxx.yml'
 
 jobs:
   container:
