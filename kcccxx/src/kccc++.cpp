@@ -5,6 +5,7 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Value.h"
 #include "llvm/Support/Error.h"
+#include "llvm/Support/FileSystem.h"
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Support/raw_ostream.h"
@@ -55,6 +56,17 @@ lookup_target(std::string const &target_triple) {
   }
   return target;
 }
+
+llvm::Expected<std::unique_ptr<llvm::raw_fd_ostream>>
+create_raw_fd_stream(llvm::StringRef filename, llvm::sys::fs::OpenFlags flags) {
+  std::error_code ec;
+  auto stream = std::make_unique<llvm::raw_fd_ostream>(filename, ec, flags);
+  if (ec) {
+    return llvm::errorCodeToError(ec);
+  }
+  return stream;
+}
+
 int
 main(int argc, char **argv) {
   if (argc < 2) {
