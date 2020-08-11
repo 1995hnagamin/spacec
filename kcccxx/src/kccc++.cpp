@@ -5,6 +5,7 @@
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Value.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/TargetRegistry.h"
@@ -108,15 +109,26 @@ output_object_code(llvm::Module &mod, std::string const &filename) {
   return llvm::Error::success();
 }
 
+static llvm::cl::OptionCategory kcccxx_category("kccc++");
+
+static llvm::cl::opt<std::string> input_filename(
+  llvm::cl::Positional,
+  llvm::cl::desc("<input file>"),
+  llvm::cl::Required,
+  llvm::cl::cat(kcccxx_category));
+
+static llvm::cl::opt<std::string> output_filename(
+  "o",
+  llvm::cl::desc("output filename"),
+  llvm::cl::value_desc("filename"),
+  llvm::cl::init("kc.o"),
+  llvm::cl::cat(kcccxx_category));
+
 int
 main(int argc, char **argv) {
-  if (argc < 2) {
-    show_help(argv[0]);
-    return 0;
-  }
-  auto const filename = static_cast<std::string>(argv[1]);
+  llvm::cl::ParseCommandLineOptions(argc, argv);
 
-  auto const tokens = LexicalAnalysis(filename);
+  auto const tokens = LexicalAnalysis(input_filename);
   Parser parser(tokens);
   auto const tunit = parser.parse_top_level_decl();
 
@@ -124,13 +136,13 @@ main(int argc, char **argv) {
   tc.traverse_tunit(tunit);
 
   llvm::LLVMContext ctxt;
-  llvm::Module mod(filename, ctxt);
+  llvm::Module mod(input_filename, ctxt);
   llvm::IRBuilder<> builder(ctxt);
 
   CodeGen codegen(ctxt, mod, builder);
   codegen.execute(tunit);
 
-  if (auto err = output_object_code(mod, "kc.o")) {
+  if (auto err = output_object_code(mod, output_filename)) {
     llvm::logAllUnhandledErrors(std::move(err), llvm::errs(), "[kccc++] ");
     return 1;
   }
