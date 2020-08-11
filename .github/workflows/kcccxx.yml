@@ -1,13 +1,15 @@
-name: Build kccc++
+name: Build kccc++, kceagec
 
 on:
   push:
     paths:
       - 'kcccxx/**'
+      - 'kceagec/**'
       - '.github/workflows/kcccxx.yml'
   pull_request:
     paths:
       - 'kcccxx/**'
+      - 'kceagec/**'
       - '.github/workflows/kcccxx.yml'
 
 jobs:
@@ -35,3 +37,7 @@ jobs:
         cmake ..
         cmake --build .
       working-directory: ./kcccxx/build
+    
+    - name: make kceagec
+      run: make KCC=../../kcccxx/build/kccc++
+      working-directory: ./kceagec/src
