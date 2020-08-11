@@ -4,7 +4,12 @@
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Value.h"
+#include "llvm/Support/Error.h"
+#include "llvm/Support/TargetRegistry.h"
+#include "llvm/Support/TargetSelect.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
 
 #include "ast.hpp"
 #include "codegen.hpp"
@@ -40,6 +45,16 @@ show_tokens(std::vector<Token> const &tokens) {
   }
 }
 
+llvm::Expected<llvm::Target const *>
+lookup_target(std::string const &target_triple) {
+  std::string error_message_buffer;
+  auto const target = llvm::TargetRegistry::lookupTarget(target_triple, error_message_buffer);
+  if (!target) {
+    return llvm::make_error<llvm::StringError>(
+      error_message_buffer, std::make_error_code(std::errc::not_supported));
+  }
+  return target;
+}
 int
 main(int argc, char **argv) {
   if (argc < 2) {
