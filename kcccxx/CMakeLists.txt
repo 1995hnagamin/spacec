@@ -25,6 +25,11 @@ link_directories(
 
 set(LLVM_LINK_COMPONENTS
     Core
+    MC
+    X86AsmParser
+    X86CodeGen
+    X86Desc
+    X86Info
 )
 
 add_definitions(${LLVM_DEFINITIONS})
