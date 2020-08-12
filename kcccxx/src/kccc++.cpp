@@ -181,7 +181,8 @@ main(int argc, char **argv) {
   }
 
   // output object file
-  if (auto err = output_object_code(mod, output_filename)) {
+  auto const outpath = (output_filename.length() > 0) ? output_filename : std::string("kc.o");
+  if (auto err = output_object_code(mod, outpath)) {
     llvm::logAllUnhandledErrors(std::move(err), llvm::errs(), "[kccc++] ");
     return 1;
   }
