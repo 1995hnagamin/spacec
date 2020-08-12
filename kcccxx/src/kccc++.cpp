@@ -131,6 +131,11 @@ static llvm::cl::opt<std::string> output_filename(
   llvm::cl::init("kc.o"),
   llvm::cl::cat(kcccxx_category));
 
+static llvm::cl::opt<bool>
+  opt_emit_llvm("emit-llvm", llvm::cl::desc("emit LLVM IR"), llvm::cl::cat(kcccxx_category));
+
+static llvm::cl::opt<bool> opt_assemble("S", llvm::cl::desc(""), llvm::cl::cat(kcccxx_category));
+
 int
 main(int argc, char **argv) {
   llvm::cl::ParseCommandLineOptions(argc, argv);
