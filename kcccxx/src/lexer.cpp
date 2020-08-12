@@ -179,5 +179,6 @@ LexicalAnalysis(std::string const &filename) {
       tokens.emplace_back(TokenType::Symbol, tok);
     }
   }
+  tokens.emplace_back(TokenType::Eof, "");
   return tokens;
 }

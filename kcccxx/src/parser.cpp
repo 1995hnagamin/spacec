@@ -14,7 +14,7 @@
 TranslationUnitAst *
 Parser::parse_top_level_decl() {
   std::vector<Ast *> funcs;
-  while (tokens.seek()->representation() == "DefFn") {
+  while (tokens.seek()->type() != TokenType::Eof) {
     auto const fn = parse_deffn_decl();
     funcs.push_back(fn);
   }
