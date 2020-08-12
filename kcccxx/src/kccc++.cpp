@@ -109,6 +109,13 @@ output_object_code(llvm::Module &mod, std::string const &filename) {
   return llvm::Error::success();
 }
 
+std::string
+replace_file_extension(std::string const &filename, std::string const &extension) {
+  llvm::SmallString<128> buf = static_cast<llvm::StringRef>(filename);
+  llvm::sys::path::replace_extension(buf, extension);
+  return buf.str();
+}
+
 static llvm::cl::OptionCategory kcccxx_category("kccc++");
 
 static llvm::cl::opt<std::string> input_filename(
