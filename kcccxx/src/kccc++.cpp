@@ -109,6 +109,13 @@ output_object_code(llvm::Module &mod, std::string const &filename) {
   return llvm::Error::success();
 }
 
+std::string
+replace_file_extension(std::string const &filename, std::string const &extension) {
+  llvm::SmallString<128> buf = static_cast<llvm::StringRef>(filename);
+  llvm::sys::path::replace_extension(buf, extension);
+  return buf.str();
+}
+
 static llvm::cl::OptionCategory kcccxx_category("kccc++");
 
 static llvm::cl::opt<std::string> input_filename(
@@ -121,8 +128,25 @@ static llvm::cl::opt<std::string> output_filename(
   "o",
   llvm::cl::desc("output filename"),
   llvm::cl::value_desc("filename"),
-  llvm::cl::init("kc.o"),
+  llvm::cl::ValueRequired,
+  llvm::cl::init(""),
   llvm::cl::cat(kcccxx_category));
+
+static llvm::cl::opt<bool>
+  opt_emit_llvm("emit-llvm", llvm::cl::desc("emit LLVM IR"), llvm::cl::cat(kcccxx_category));
+
+static llvm::cl::opt<bool> opt_assemble("S", llvm::cl::desc(""), llvm::cl::cat(kcccxx_category));
+
+llvm::Error
+output_llvm_ir(llvm::Module &mod, std::string const &filename) {
+  auto dest = create_raw_fd_stream(filename, llvm::sys::fs::OF_None);
+  if (!dest) {
+    return dest.takeError();
+  }
+  mod.print(*(dest.get()), nullptr);
+
+  return llvm::Error::success();
+}
 
 int
 main(int argc, char **argv) {
@@ -142,7 +166,23 @@ main(int argc, char **argv) {
   CodeGen codegen(ctxt, mod, builder);
   codegen.execute(tunit);
 
-  if (auto err = output_object_code(mod, output_filename)) {
+  // output LLVM IR
+  if (opt_emit_llvm && opt_assemble) {
+    auto const outpath = (output_filename.length() > 0)
+      ? output_filename
+      : replace_file_extension(input_filename, "*.ll");
+
+    if (auto err = output_llvm_ir(mod, outpath)) {
+      llvm::logAllUnhandledErrors(std::move(err), llvm::errs(), "[kccc++] ");
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+  // output object file
+  auto const outpath = (output_filename.length() > 0) ? output_filename : std::string("kc.o");
+  if (auto err = output_object_code(mod, outpath)) {
     llvm::logAllUnhandledErrors(std::move(err), llvm::errs(), "[kccc++] ");
     return 1;
   }
