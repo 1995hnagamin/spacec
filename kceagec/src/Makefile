@@ -9,5 +9,5 @@ all: $(OBJS)
 clean:
 	$(RM) $(OBJS)
 
-.kcea.o:
-	$(KCC) $(KCFLAGS) -o $@ $^
+%.o: %.kcea $(KCC)
+	$(KCC) $(KCFLAGS) -o $@ $<
