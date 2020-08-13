@@ -45,4 +45,4 @@ add_llvm_executable(kccc++
     ${SRC_DIR}/typechecker.cpp
 )
 
-set_property(TARGET kccc++ PROPERTY CXX_STANDARD 14)
+set_property(TARGET kccc++ PROPERTY CXX_STANDARD 17)
