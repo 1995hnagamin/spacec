@@ -91,14 +91,28 @@ CodeGen::execute(Ast *prog) {
   return true;
 }
 
+static llvm::StructType *
+get_slice_type(CodeGenImpl *pimpl, llvm::Type *elt) {
+  llvm::ArrayRef<llvm::Type *> slice_member_type{
+    llvm::PointerType::getUnqual(elt),
+    llvm::Type::getInt32Ty(pimpl->thectxt) // FIXME
+  };
+  return llvm::StructType::get(pimpl->thectxt, slice_member_type);
+}
+
 static llvm::Type *
 generate_llvm_type(CodeGenImpl *pimpl, Type *type) {
   using llvm::dyn_cast;
+  using llvm::isa;
   if (auto const boolty = dyn_cast<BoolType>(type)) {
     return llvm::IntegerType::getInt1Ty(pimpl->thectxt);
   }
   if (auto const intty = dyn_cast<IntNType>(type)) {
     return llvm::IntegerType::get(pimpl->thectxt, intty->get_width());
+  }
+  if (auto const slice = dyn_cast<SliceType>(type)) {
+    auto const elt = generate_llvm_type(pimpl, slice->get_elem_type());
+    return get_slice_type(pimpl, elt);
   }
   llvm_unreachable("not implemented");
 }
@@ -327,14 +341,10 @@ llvm::Value *
 CodeGen::generate_octet_seq_literal(OctetSeqLiteralAst *oseq) {
   auto const content = oseq->get_content();
   auto const pai8 = create_global_octet_seq_ptr(pimpl, content);
-  llvm::ArrayRef<llvm::Type *> slice_member_type{
-    pai8->getType(),
-    llvm::Type::getInt32Ty(pimpl->thectxt) // FIXME
-  };
-  auto const slice_t = llvm::StructType::get(pimpl->thectxt, slice_member_type);
 
   llvm::ArrayRef<llvm::Constant *> members{
     pai8, llvm::ConstantInt::get(llvm::Type::getInt32Ty(pimpl->thectxt), content.size())};
+  auto const slice_t = get_slice_type(pimpl, llvm::IntegerType::getInt8Ty(pimpl->thectxt));
   auto const val = llvm::ConstantStruct::get(slice_t, members);
 
   return val;

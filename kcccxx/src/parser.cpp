@@ -285,6 +285,12 @@ Parser::parse_type() {
       if (head == "Fr") {
         return parse_fn_type();
       }
+      if (head == "Slice") {
+        tokens.advance();
+        auto const elt = parse_type();
+        return new SliceType(elt);
+      }
+      llvm_unreachable("not implemented");
     }
     default:
       llvm_unreachable("not implemented");
