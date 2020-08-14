@@ -9,6 +9,7 @@ enum class TokenType {
   SmallName,
   CapitalName,
   Digit,
+  DoubleQuoted,
   LParen,
   RParen,
   LBracket,

@@ -126,6 +126,9 @@ CodeGen::generate_expr(Ast *body) {
   if (auto const num = dyn_cast<IntegerLiteralExpr>(body)) {
     return generate_integer_literal(num);
   }
+  if (auto const oseq = dyn_cast<OctetSeqLiteralAst>(body)) {
+    return generate_octet_seq_literal(oseq);
+  }
   if (auto const var = dyn_cast<VarRefExprAst>(body)) {
     return generate_var_ref(var);
   }
@@ -275,6 +278,23 @@ CodeGen::generate_let_stmt(LetStmtAst *let) {
   pimpl->thebuilder.CreateStore(val, alloca);
 
   return alloca;
+}
+
+llvm::Value *
+CodeGen::generate_octet_seq_literal(OctetSeqLiteralAst *oseq) {
+  auto const content = oseq->get_content();
+  auto const pai8 = pimpl->thebuilder.CreateGlobalStringPtr(content);
+  llvm::ArrayRef<llvm::Type *> slice_member_type{
+    pai8->getType(),
+    llvm::Type::getInt32Ty(pimpl->thectxt) // FIXME
+  };
+  auto const slice_t = llvm::StructType::create(pimpl->thectxt, slice_member_type, "oseq_t");
+
+  llvm::ArrayRef<llvm::Constant *> members{
+    pai8, llvm::ConstantInt::get(llvm::Type::getInt32Ty(pimpl->thectxt), content.size())};
+  auto const val = llvm::ConstantStruct::get(slice_t, members);
+
+  return val;
 }
 
 llvm::Value *

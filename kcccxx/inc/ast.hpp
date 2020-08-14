@@ -16,6 +16,7 @@ public:
     IntegerLiteral,
     IfExpr,
     LetStmt,
+    OctetSeqLiteral,
     VarRefExpr,
   };
 
@@ -242,6 +243,21 @@ public:
 private:
   std::string name;
   Ast *rhs;
+};
+
+class OctetSeqLiteralAst : public ExprAst {
+public:
+  OctetSeqLiteralAst(std::string const &lit): ExprAst(AK::OctetSeqLiteral), content(lit) {
+  }
+  static bool classof(Ast const *a) {
+    return a->get_kind() == AK::OctetSeqLiteral;
+  }
+  std::string get_content() const {
+    return content;
+  }
+
+private:
+  std::string content; // as written
 };
 
 class TranslationUnitAst : public Ast {

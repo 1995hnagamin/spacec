@@ -177,6 +177,9 @@ Parser::parse_primary_expr() {
       if (head == "If") {
         return parse_if_expr();
       }
+      if (head == "Oc") {
+        return parse_octet_seq_literal();
+      }
       if (head == "True") {
         tokens.advance();
         return new BoolLiteralExprAst(true);
@@ -239,6 +242,19 @@ Parser::parse_let_stmt() {
   tokens.expect(TokenType::Symbol, "=");
   auto const rhs = parse_expr();
   return new LetStmtAst(nametok->representation(), rhs);
+}
+
+static std::string
+read_octet_seq_literal(std::string const &repr) {
+  return repr.substr(1, repr.size() - 2);
+}
+
+Ast *
+Parser::parse_octet_seq_literal() {
+  tokens.expect(TokenType::CapitalName, "Oc");
+  auto const literal = tokens.expect(TokenType::DoubleQuoted);
+  auto const content = read_octet_seq_literal(literal->representation());
+  return new OctetSeqLiteralAst(content);
 }
 
 Type *

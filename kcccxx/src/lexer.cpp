@@ -107,6 +107,19 @@ struct char_stream {
   char cur;
 };
 
+Token
+lex_double_quoted_literal(char_stream &stream) {
+  std::string str = "\"";
+
+  char c;
+  do {
+    c = stream.get_next_char();
+    str.push_back(c);
+  } while (c != '\"');
+
+  return Token(TokenType::DoubleQuoted, str);
+}
+
 std::vector<Token>
 LexicalAnalysis(std::string const &filename) {
   auto const syms = static_cast<std::string>("!$%&-=~^|@+:*<>/?.");
@@ -143,6 +156,11 @@ LexicalAnalysis(std::string const &filename) {
       case ';':
         tokens.emplace_back(TokenType::Semicolon, ";");
         continue;
+      case '"': {
+        auto const tok = lex_double_quoted_literal(stream);
+        tokens.push_back(tok);
+        continue;
+      }
       default:; // do nothing
     }
     if (std::isdigit(c)) {
