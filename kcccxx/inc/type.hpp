@@ -10,6 +10,7 @@ public:
     Function,
     IntN,
     Unit,
+    Slice,
     TyVar,
   };
 
@@ -84,6 +85,21 @@ public:
   static bool classof(Type const *t) {
     return t->get_kind() == TK::Unit;
   }
+};
+
+class SliceType : public Type {
+public:
+  explicit SliceType(Type *el): Type(TK::Slice), elem(el) {
+  }
+  static bool classof(Type const *t) {
+    return t->get_kind() == TK::Slice;
+  }
+  Type *get_elem_type() const {
+    return elem;
+  }
+
+private:
+  Type *elem;
 };
 
 class TyVar : public Type {
