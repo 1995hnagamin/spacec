@@ -11,3 +11,5 @@ clean:
 
 %.o: %.kcea $(KCC)
 	$(KCC) $(KCFLAGS) -o $@ $<
+
+kceagec: kceagec.o helper.o
