@@ -13,6 +13,7 @@ public:
     BlockExpr,
     BoolLiteral,
     CallExpr,
+    DeclStmt,
     IntegerLiteral,
     IfExpr,
     LetStmt,
@@ -186,6 +187,25 @@ public:
 private:
   Ast *callee;
   std::vector<Ast *> args;
+};
+
+class DeclStmtAst : public ExprAst {
+public:
+  DeclStmtAst(std::string const &n, Type *t): ExprAst(AK::DeclStmt), name(n), type(t) {
+  }
+  static bool classof(Ast const *a) {
+    return a->get_kind() == AK::DeclStmt;
+  }
+  std::string get_var_name() const {
+    return name;
+  }
+  Type *get_type() const {
+    return type;
+  }
+
+private:
+  std::string name;
+  Type *type;
 };
 
 class IntegerLiteralExpr : public ExprAst {

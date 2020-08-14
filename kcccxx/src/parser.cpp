@@ -71,6 +71,9 @@ Parser::parse_stmt() {
   if (repr == "Let") {
     return parse_let_stmt();
   }
+  if (repr == "Decl") {
+    return parse_decl_stmt();
+  }
   return parse_expr();
 }
 
@@ -152,6 +155,15 @@ Parser::parse_block_expr() {
   auto const stmts = parse_stmt_seq();
   tokens.expect(TokenType::RBrace);
   return new BlockExprAst(stmts);
+}
+
+Ast *
+Parser::parse_decl_stmt() {
+  tokens.expect(TokenType::CapitalName, "Decl");
+  auto const nametok = tokens.expect(TokenType::SmallName);
+  tokens.expect(TokenType::Symbol, ":");
+  auto const ty = parse_type();
+  return new DeclStmtAst(nametok->representation(), ty);
 }
 
 Ast *
@@ -266,10 +278,35 @@ Parser::parse_type() {
       return new IntNType(32);
     }
     case TokenType::CapitalName: {
-      tokens.expect(TokenType::CapitalName, "Bool");
-      return new BoolType;
+      auto const head = tok->representation();
+      if (head == "Bool") {
+        return new BoolType;
+      }
+      if (head == "Fp") {
+        return parse_fn_type();
+      }
     }
     default:
       llvm_unreachable("not implemented");
   }
+}
+
+Type *
+Parser::parse_fn_type() {
+  tokens.expect(TokenType::CapitalName, "Fp");
+
+  tokens.expect(TokenType::LParen);
+  std::vector<Type *> types;
+  auto tok = tokens.seek();
+  while (tok->type() != TokenType::RParen) {
+    auto const ty = parse_type();
+    types.push_back(ty);
+    tok = tokens.get();
+    if (tok->type() == TokenType::Comma) {
+      tok = tokens.get();
+    }
+  }
+  tokens.expect(TokenType::Symbol, "->");
+  auto const retty = parse_type();
+  return new FunctionType(retty, types);
 }

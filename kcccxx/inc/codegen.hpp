@@ -19,6 +19,7 @@ public:
   llvm::Value *generate_block_expr(BlockExprAst *);
   llvm::Value *generate_bool_literal(BoolLiteralExprAst *);
   llvm::Value *generate_call_expr(CallExprAst *);
+  llvm::Value *generate_decl_stmt(DeclStmtAst *);
   llvm::Value *generate_function_definition(DefFnAst *);
   llvm::Value *generate_if_expr(IfExprAst *);
   llvm::Value *generate_integer_literal(IntegerLiteralExpr *);

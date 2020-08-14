@@ -14,13 +14,16 @@ public:
   Ast *parse_expr();
   Ast *parse_binary_expr_seq();
   Ast *parse_block_expr();
+  Ast *parse_decl_stmt();
   Ast *parse_primary_expr();
   Ast *parse_integer_literal();
   Ast *parse_ident_expr();
   Ast *parse_if_expr();
   Ast *parse_let_stmt();
   Ast *parse_octet_seq_literal();
+
   Type *parse_type();
+  Type *parse_fn_type();
 
 private:
   TokenStream tokens;

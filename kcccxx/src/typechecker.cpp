@@ -107,6 +107,9 @@ TypeChecker::traverse_expr(Ast *expr) {
   if (auto const call = dyn_cast<CallExprAst>(expr)) {
     return traverse_call_expr(call);
   }
+  if (auto const decl = dyn_cast<DeclStmtAst>(expr)) {
+    return traverse_decl_stmt(decl);
+  }
   if (auto const ife = dyn_cast<IfExprAst>(expr)) {
     return traverse_if_expr(ife);
   }
@@ -196,6 +199,16 @@ TypeChecker::traverse_call_expr(CallExprAst *call) {
   }
   call->set_type(fnty->get_return_type());
   return fnty->get_return_type();
+}
+
+Type *
+TypeChecker::traverse_decl_stmt(DeclStmtAst *decl) {
+  auto const var = decl->get_var_name();
+  auto const ty = decl->get_type();
+  pimpl->register_type(var, ty);
+  auto const unit = new UnitType;
+  decl->set_type(unit);
+  return unit;
 }
 
 Type *

@@ -170,7 +170,7 @@ main(int argc, char **argv) {
   if (opt_emit_llvm && opt_assemble) {
     auto const outpath = (output_filename.length() > 0)
       ? output_filename
-      : replace_file_extension(input_filename, "*.ll");
+      : replace_file_extension(input_filename, ".ll");
 
     if (auto err = output_llvm_ir(mod, outpath)) {
       llvm::logAllUnhandledErrors(std::move(err), llvm::errs(), "[kccc++] ");
