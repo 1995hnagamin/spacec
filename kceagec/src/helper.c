@@ -1,6 +1,11 @@
-#include <stdio.h>
+#include <unistd.h>
 
-int print_msg(int x) {
-	printf("x = %d\n", x);
-	return 0;
+struct octet_seq {
+  char const *data;
+  int cap;
+};
+
+int write_oseq(struct octet_seq os) {
+  write(1, os.data, os.cap);
+  return 0;
 }
