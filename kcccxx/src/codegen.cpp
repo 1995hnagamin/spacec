@@ -10,6 +10,7 @@
 #include "binop.hpp"
 #include "codegen.hpp"
 #include "type.hpp"
+#include <array>
 
 class CodeGenImpl {
 public:
@@ -300,10 +301,32 @@ CodeGen::generate_let_stmt(LetStmtAst *let) {
   return alloca;
 }
 
+static llvm::Constant *
+create_global_octet_seq_ptr(CodeGenImpl *pimpl, std::string const &data) {
+  // See llvm::IRBuilderBase::CreateGlobalStringPtr()
+  auto const strval = llvm::ConstantDataArray::getString(pimpl->thectxt, data, false /* no \0 */);
+  auto global = new llvm::GlobalVariable(
+    pimpl->themod,
+    strval->getType(),
+    true /* is constant */,
+    llvm::GlobalVariable::PrivateLinkage,
+    strval,
+    "oseq");
+  global->setUnnamedAddr(llvm::GlobalVariable::UnnamedAddr::Global);
+  global->setAlignment(llvm::Align(1));
+
+  auto const zero = llvm::ConstantInt::get(llvm::Type::getInt32Ty(pimpl->thectxt), 0);
+  std::array<llvm::Constant *, 2> indices{
+    zero, // &strval : [N x i8]*
+    zero, // &strval[0] : i8*
+  };
+  return llvm::ConstantExpr::getInBoundsGetElementPtr(global->getValueType(), global, indices);
+}
+
 llvm::Value *
 CodeGen::generate_octet_seq_literal(OctetSeqLiteralAst *oseq) {
   auto const content = oseq->get_content();
-  auto const pai8 = pimpl->thebuilder.CreateGlobalStringPtr(content);
+  auto const pai8 = create_global_octet_seq_ptr(pimpl, content);
   llvm::ArrayRef<llvm::Type *> slice_member_type{
     pai8->getType(),
     llvm::Type::getInt32Ty(pimpl->thectxt) // FIXME
