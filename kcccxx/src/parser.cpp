@@ -282,7 +282,7 @@ Parser::parse_type() {
       if (head == "Bool") {
         return new BoolType;
       }
-      if (head == "Fp") {
+      if (head == "Fr") {
         return parse_fn_type();
       }
     }
@@ -293,7 +293,7 @@ Parser::parse_type() {
 
 Type *
 Parser::parse_fn_type() {
-  tokens.expect(TokenType::CapitalName, "Fp");
+  tokens.expect(TokenType::CapitalName, "Fr");
 
   tokens.expect(TokenType::LParen);
   std::vector<Type *> types;
