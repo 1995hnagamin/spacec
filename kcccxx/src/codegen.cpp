@@ -114,6 +114,9 @@ generate_llvm_type(CodeGenImpl *pimpl, Type *type) {
     auto const elt = generate_llvm_type(pimpl, slice->get_elem_type());
     return get_slice_type(pimpl, elt);
   }
+  if (isa<U8Type>(type)) {
+    return llvm::IntegerType::getInt8Ty(pimpl->thectxt);
+  }
   llvm_unreachable("not implemented");
 }
 

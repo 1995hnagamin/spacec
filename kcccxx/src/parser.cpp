@@ -274,8 +274,16 @@ Parser::parse_type() {
   auto const tok = tokens.seek();
   switch (tok->type()) {
     case TokenType::SmallName: {
-      tokens.expect(TokenType::SmallName, "i32");
-      return new IntNType(32);
+      auto const head = tok->representation();
+      if (head == "i32") {
+        tokens.advance();
+        return new IntNType(32);
+      }
+      if (head == "u8") {
+        tokens.advance();
+        return new U8Type;
+      }
+      llvm_unreachable("not implemented");
     }
     case TokenType::CapitalName: {
       auto const head = tok->representation();
