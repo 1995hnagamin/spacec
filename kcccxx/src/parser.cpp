@@ -250,10 +250,35 @@ Parser::parse_type() {
       return new IntNType(32);
     }
     case TokenType::CapitalName: {
-      tokens.expect(TokenType::CapitalName, "Bool");
-      return new BoolType;
+      auto const head = tok->representation();
+      if (head == "Bool") {
+        return new BoolType;
+      }
+      if (head == "Fp") {
+        return parse_fn_type();
+      }
     }
     default:
       llvm_unreachable("not implemented");
   }
+}
+
+Type *
+Parser::parse_fn_type() {
+  tokens.expect(TokenType::CapitalName, "Fp");
+
+  tokens.expect(TokenType::LParen);
+  std::vector<Type *> types;
+  auto tok = tokens.seek();
+  while (tok->type() != TokenType::RParen) {
+    auto const ty = parse_type();
+    types.push_back(ty);
+    tok = tokens.get();
+    if (tok->type() == TokenType::Comma) {
+      tok = tokens.get();
+    }
+  }
+  tokens.expect(TokenType::Symbol, "->");
+  auto const retty = parse_type();
+  return new FunctionType(retty, types);
 }

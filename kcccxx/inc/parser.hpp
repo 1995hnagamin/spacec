@@ -19,7 +19,9 @@ public:
   Ast *parse_ident_expr();
   Ast *parse_if_expr();
   Ast *parse_let_stmt();
+
   Type *parse_type();
+  Type *parse_fn_type();
 
 private:
   TokenStream tokens;
