@@ -117,6 +117,9 @@ CodeGen::generate_expr(Ast *body) {
   if (auto const call = dyn_cast<CallExprAst>(body)) {
     return generate_call_expr(call);
   }
+  if (auto const decl = dyn_cast<DeclStmtAst>(body)) {
+    return generate_decl_stmt(decl);
+  }
   if (auto const ife = dyn_cast<IfExprAst>(body)) {
     return generate_if_expr(ife);
   }
@@ -191,6 +194,23 @@ CodeGen::generate_call_expr(CallExprAst *call) {
     args.push_back(expr);
   }
   return pimpl->thebuilder.CreateCall(fn, args, "calltmp");
+}
+
+llvm::Value *
+CodeGen::generate_decl_stmt(DeclStmtAst *decl) {
+  auto const fnt = llvm::cast<FunctionType>(decl->get_type());
+
+  std::vector<llvm::Type *> llparams;
+  for (size_t i = 0, arity = fnt->get_arity(); i < arity; ++i) {
+    auto const llt = generate_llvm_type(pimpl, fnt->get_nth_param(i));
+    llparams.push_back(llt);
+  }
+  auto const llfnt = llvm::FunctionType::get(
+    generate_llvm_type(pimpl, fnt->get_return_type()), llparams, false /* not variadic */);
+  auto const fn = llvm::Function::Create(
+    llfnt, llvm::Function::ExternalLinkage, llvm::Twine(decl->get_var_name()), pimpl->themod);
+  pimpl->register_val(decl->get_var_name(), fn);
+  return llvm::UndefValue::get(llvm::Type::getVoidTy(pimpl->thectxt));
 }
 
 llvm::Value *
