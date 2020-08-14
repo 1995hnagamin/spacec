@@ -331,7 +331,7 @@ CodeGen::generate_octet_seq_literal(OctetSeqLiteralAst *oseq) {
     pai8->getType(),
     llvm::Type::getInt32Ty(pimpl->thectxt) // FIXME
   };
-  auto const slice_t = llvm::StructType::create(pimpl->thectxt, slice_member_type, "oseq_t");
+  auto const slice_t = llvm::StructType::get(pimpl->thectxt, slice_member_type);
 
   llvm::ArrayRef<llvm::Constant *> members{
     pai8, llvm::ConstantInt::get(llvm::Type::getInt32Ty(pimpl->thectxt), content.size())};
