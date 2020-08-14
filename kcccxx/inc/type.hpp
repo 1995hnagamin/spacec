@@ -9,6 +9,7 @@ public:
     Bool,
     Function,
     IntN,
+    U8,
     Unit,
     Slice,
     TyVar,
@@ -113,6 +114,15 @@ public:
 
 private:
   size_t id;
+};
+
+class U8Type : public Type {
+public:
+  U8Type(): Type(TK::U8) {
+  }
+  static bool classof(Type const *t) {
+    return t->get_kind() == TK::U8;
+  }
 };
 
 #endif /* !TYPE_HPP */
