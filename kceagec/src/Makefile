@@ -1,4 +1,5 @@
 KCFLAGS =
+LDFLAGS = -no-pie
 OBJS = kceagec
 
 .PHONY: all clean
