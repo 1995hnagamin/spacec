@@ -1,6 +1,8 @@
 PROGRAM = fenobcaml
 
 FILES[] =
+	lexer
+	parser
 	main
 
 
