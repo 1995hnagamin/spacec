@@ -1,0 +1,12 @@
+PROGRAM = fenobcaml
+
+FILES[] =
+	main
+
+
+OCamlGeneratedFiles(lexer.ml parser.mli parser.ml)
+
+OCamlProgram($(PROGRAM), $(FILES))
+
+.DEFAULT: \
+	$(if $(NATIVE_ENABLED), $(PROGRAM).opt)
