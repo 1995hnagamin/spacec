@@ -1,0 +1,42 @@
+name: Build FenobCamL
+
+on:
+  push:
+    paths:
+      - 'tools/fenobcaml/**'
+      - '.github/workflows/fenobam.yml'
+  pull_request:
+    paths:
+      - 'tools/fenobcaml/**'
+      - '.github/workflows/fenobam.yml'
+
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    container: hnagamin/fenobcaml-env:latest
+
+    steps:
+    - name: change ownership of home directory
+      run: |
+        sudo chown kceage:kceage .
+
+    - uses: actions/checkout@v2
+
+    - name: ocp-indent and omake
+      run: |
+        opam init --disable-sandboxing --verbose
+        eval $(opam env)
+        for file in $(find . -name '*.ml'); do
+          ocp-indent -i $file
+        done
+        git diff --quiet
+        omake
+      working-directory: ./tools/fenobcaml
+      env:
+        HOME: /home/kceage
+
+    - name: run fenobcaml.opt
+      run: ./fenobcaml.opt test.ebnf
+      working-directory: ./tools/fenobcaml/src
+      env:
+        HOME: /home/kceage
