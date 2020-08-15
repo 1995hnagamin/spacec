@@ -189,6 +189,9 @@ Parser::parse_primary_expr() {
       if (head == "If") {
         return parse_if_expr();
       }
+      if (head == "Oc") {
+        return parse_octet_seq_literal();
+      }
       if (head == "True") {
         tokens.advance();
         return new BoolLiteralExprAst(true);
@@ -253,22 +256,49 @@ Parser::parse_let_stmt() {
   return new LetStmtAst(nametok->representation(), rhs);
 }
 
+static std::string
+read_octet_seq_literal(std::string const &repr) {
+  return repr.substr(1, repr.size() - 2);
+}
+
+Ast *
+Parser::parse_octet_seq_literal() {
+  tokens.expect(TokenType::CapitalName, "Oc");
+  auto const literal = tokens.expect(TokenType::DoubleQuoted);
+  auto const content = read_octet_seq_literal(literal->representation());
+  return new OctetSeqLiteralAst(content);
+}
+
 Type *
 Parser::parse_type() {
   auto const tok = tokens.seek();
   switch (tok->type()) {
     case TokenType::SmallName: {
-      tokens.expect(TokenType::SmallName, "i32");
-      return new IntNType(32);
+      auto const head = tok->representation();
+      if (head == "i32") {
+        tokens.advance();
+        return new IntNType(32);
+      }
+      if (head == "u8") {
+        tokens.advance();
+        return new U8Type;
+      }
+      llvm_unreachable("not implemented");
     }
     case TokenType::CapitalName: {
       auto const head = tok->representation();
       if (head == "Bool") {
         return new BoolType;
       }
-      if (head == "Fp") {
+      if (head == "Fr") {
         return parse_fn_type();
       }
+      if (head == "Slice") {
+        tokens.advance();
+        auto const elt = parse_type();
+        return new SliceType(elt);
+      }
+      llvm_unreachable("not implemented");
     }
     default:
       llvm_unreachable("not implemented");
@@ -277,7 +307,7 @@ Parser::parse_type() {
 
 Type *
 Parser::parse_fn_type() {
-  tokens.expect(TokenType::CapitalName, "Fp");
+  tokens.expect(TokenType::CapitalName, "Fr");
 
   tokens.expect(TokenType::LParen);
   std::vector<Type *> types;

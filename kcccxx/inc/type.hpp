@@ -9,7 +9,9 @@ public:
     Bool,
     Function,
     IntN,
+    U8,
     Unit,
+    Slice,
     TyVar,
   };
 
@@ -86,6 +88,21 @@ public:
   }
 };
 
+class SliceType : public Type {
+public:
+  explicit SliceType(Type *el): Type(TK::Slice), elem(el) {
+  }
+  static bool classof(Type const *t) {
+    return t->get_kind() == TK::Slice;
+  }
+  Type *get_elem_type() const {
+    return elem;
+  }
+
+private:
+  Type *elem;
+};
+
 class TyVar : public Type {
 public:
   TyVar(size_t type_id): Type(TK::TyVar), id(type_id) {
@@ -97,6 +114,15 @@ public:
 
 private:
   size_t id;
+};
+
+class U8Type : public Type {
+public:
+  U8Type(): Type(TK::U8) {
+  }
+  static bool classof(Type const *t) {
+    return t->get_kind() == TK::U8;
+  }
 };
 
 #endif /* !TYPE_HPP */

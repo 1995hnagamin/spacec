@@ -10,6 +10,7 @@
 #include "binop.hpp"
 #include "codegen.hpp"
 #include "type.hpp"
+#include <array>
 
 class CodeGenImpl {
 public:
@@ -90,14 +91,31 @@ CodeGen::execute(Ast *prog) {
   return true;
 }
 
+static llvm::StructType *
+get_slice_type(CodeGenImpl *pimpl, llvm::Type *elt) {
+  llvm::ArrayRef<llvm::Type *> slice_member_type{
+    llvm::PointerType::getUnqual(elt),
+    llvm::Type::getInt32Ty(pimpl->thectxt) // FIXME
+  };
+  return llvm::StructType::get(pimpl->thectxt, slice_member_type);
+}
+
 static llvm::Type *
 generate_llvm_type(CodeGenImpl *pimpl, Type *type) {
   using llvm::dyn_cast;
+  using llvm::isa;
   if (auto const boolty = dyn_cast<BoolType>(type)) {
     return llvm::IntegerType::getInt1Ty(pimpl->thectxt);
   }
   if (auto const intty = dyn_cast<IntNType>(type)) {
     return llvm::IntegerType::get(pimpl->thectxt, intty->get_width());
+  }
+  if (auto const slice = dyn_cast<SliceType>(type)) {
+    auto const elt = generate_llvm_type(pimpl, slice->get_elem_type());
+    return get_slice_type(pimpl, elt);
+  }
+  if (isa<U8Type>(type)) {
+    return llvm::IntegerType::getInt8Ty(pimpl->thectxt);
   }
   llvm_unreachable("not implemented");
 }
@@ -128,6 +146,9 @@ CodeGen::generate_expr(Ast *body) {
   }
   if (auto const num = dyn_cast<IntegerLiteralExpr>(body)) {
     return generate_integer_literal(num);
+  }
+  if (auto const oseq = dyn_cast<OctetSeqLiteralAst>(body)) {
+    return generate_octet_seq_literal(oseq);
   }
   if (auto const var = dyn_cast<VarRefExprAst>(body)) {
     return generate_var_ref(var);
@@ -295,6 +316,41 @@ CodeGen::generate_let_stmt(LetStmtAst *let) {
   pimpl->thebuilder.CreateStore(val, alloca);
 
   return alloca;
+}
+
+static llvm::Constant *
+create_global_octet_seq_ptr(CodeGenImpl *pimpl, std::string const &data) {
+  // See llvm::IRBuilderBase::CreateGlobalStringPtr()
+  auto const strval = llvm::ConstantDataArray::getString(pimpl->thectxt, data, false /* no \0 */);
+  auto global = new llvm::GlobalVariable(
+    pimpl->themod,
+    strval->getType(),
+    true /* is constant */,
+    llvm::GlobalVariable::PrivateLinkage,
+    strval,
+    "oseq");
+  global->setUnnamedAddr(llvm::GlobalVariable::UnnamedAddr::Global);
+  global->setAlignment(llvm::Align(1));
+
+  auto const zero = llvm::ConstantInt::get(llvm::Type::getInt32Ty(pimpl->thectxt), 0);
+  std::array<llvm::Constant *, 2> indices{
+    zero, // &strval : [N x i8]*
+    zero, // &strval[0] : i8*
+  };
+  return llvm::ConstantExpr::getInBoundsGetElementPtr(global->getValueType(), global, indices);
+}
+
+llvm::Value *
+CodeGen::generate_octet_seq_literal(OctetSeqLiteralAst *oseq) {
+  auto const content = oseq->get_content();
+  auto const pai8 = create_global_octet_seq_ptr(pimpl, content);
+
+  llvm::ArrayRef<llvm::Constant *> members{
+    pai8, llvm::ConstantInt::get(llvm::Type::getInt32Ty(pimpl->thectxt), content.size())};
+  auto const slice_t = get_slice_type(pimpl, llvm::IntegerType::getInt8Ty(pimpl->thectxt));
+  auto const val = llvm::ConstantStruct::get(slice_t, members);
+
+  return val;
 }
 
 llvm::Value *

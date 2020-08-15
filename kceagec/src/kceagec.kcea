@@ -1,4 +1,8 @@
 DefFn main() -> i32 {
-  Decl print_msg: Fp (i32) -> i32;
-  print_msg(10)
+  Decl write_oseq: Fr (Slice u8) -> i32;
+
+  Let result = write_oseq(Oc"hello");
+
+  Let str = Oc"world";
+  write_oseq(str)
 }

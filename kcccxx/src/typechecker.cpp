@@ -94,6 +94,7 @@ TypeChecker::traverse_deffn(DefFnAst *def) {
 Type *
 TypeChecker::traverse_expr(Ast *expr) {
   using llvm::dyn_cast;
+  using llvm::isa;
   if (auto const bin = dyn_cast<BinaryExprAst>(expr)) {
     return traverse_binary_expr(bin);
   }
@@ -117,6 +118,9 @@ TypeChecker::traverse_expr(Ast *expr) {
   }
   if (auto const let = dyn_cast<LetStmtAst>(expr)) {
     return traverse_let_stmt(let);
+  }
+  if (isa<OctetSeqLiteralAst>(expr)) {
+    return new SliceType(new U8Type);
   }
   if (auto const var = dyn_cast<VarRefExprAst>(expr)) {
     return traverse_var_ref(var);
