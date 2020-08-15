@@ -1,6 +1,7 @@
 PROGRAM = fenobcaml
 
 FILES[] =
+	syntax
 	lexer
 	parser
 	main
@@ -10,5 +11,11 @@ OCamlGeneratedFiles(lexer.ml parser.mli parser.ml)
 
 OCamlProgram($(PROGRAM), $(FILES))
 
-.DEFAULT: \
+.DEFAULT: $(if $(BYTE_ENABLED), $(PROGRAM).run) \
 	$(if $(NATIVE_ENABLED), $(PROGRAM).opt)
+
+.PHONY: clean
+clean:
+	rm -f \
+	$(filter-proper-targets $(glob $(addsuffix .*, $(FILES)))) \
+	$(PROGRAM).run $(PROGRAM).opt
