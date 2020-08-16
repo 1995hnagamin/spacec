@@ -13,4 +13,6 @@ sig
   val iter : (elt -> unit) -> t -> unit
 end
 
-val first_set : (Syntax.nonterminal * Syntax.expr) list -> Syntax.expr -> FstSet.t
+type grammar = (Syntax.nonterminal * Syntax.expr) list
+
+val first_set : grammar -> Syntax.expr -> FstSet.t

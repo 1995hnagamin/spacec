@@ -1,5 +1,7 @@
 module S = Syntax
 
+type grammar = (Syntax.nonterminal * Syntax.expr) list
+
 module Fse = struct
   type t = Epsilon | Term of Syntax.terminal
   let compare = compare
