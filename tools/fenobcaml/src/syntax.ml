@@ -12,6 +12,10 @@ type expr =
   | Union of expr * expr
   | Option of expr
 
+let symbol_nont s = Symbol(Nont s)
+
+let symbol_term c = Symbol(Term c)
+
 let string_of_expr e =
   let buf = Buffer.create 100 in
   let emit = Buffer.add_string buf in
