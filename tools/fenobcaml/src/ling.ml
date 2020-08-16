@@ -91,3 +91,29 @@ let nont_set grammar =
   List.fold_left
     (fun set (nA, rhs) -> register (StrSet.add nA set) rhs)
     StrSet.empty grammar
+
+let create_dep_graph grammar start =
+  let graph = Hashtbl.create (List.length grammar) in
+  let fstab = Hashtbl.create (List.length grammar) in
+  let read_rule nA rhs =
+    let rec iter = function
+      | S.Concat(S.Symbol(S.Nont nB), beta) ->
+        let b1st = first_set_table fstab grammar beta in
+        (if FstSet.mem Fst.Epsilon b1st then Hashtbl.add graph nA nB);
+        iter beta
+      | S.Concat(_, beta) -> iter beta
+      | _ -> ()
+    in
+    iter rhs
+  in
+  List.iter (fun (nA, rhs) -> read_rule nA rhs) grammar;
+  (fstab, graph)
+
+let follow_set_table grammar start =
+  let (fstab, graph) = create_dep_graph grammar start in
+  StrSet.iter
+    (fun nA ->
+       let set = first_set_table fstab grammar (S.symbol_nont nA) in
+       Hashtbl.add fstab nA set)
+    (nont_set grammar);
+  fstab

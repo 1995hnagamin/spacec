@@ -30,3 +30,5 @@ sig
   val mem : elt -> t -> bool
   val iter : (elt -> unit) -> t -> unit
 end
+
+val follow_set_table : grammar -> string -> (string, FstSet.t) Hashtbl.t
