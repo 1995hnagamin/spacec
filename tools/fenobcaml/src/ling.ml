@@ -39,3 +39,13 @@ let first_set grammar exp =
     | S.Option(a) -> FstSet.add Epsilon (iter a)
   in
   iter exp
+
+module Follow = struct
+  type t = Eos | Term of Syntax.terminal
+  let compare = compare
+  let string_of = function
+    | Eos -> "$"
+    | Term(c) -> Printf.sprintf "'%c'" c
+end
+
+module FollowSet = Set.Make(Follow)
