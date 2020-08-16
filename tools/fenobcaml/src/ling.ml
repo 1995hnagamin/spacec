@@ -40,6 +40,33 @@ let first_set grammar exp =
   in
   iter exp
 
+let first_set_table tbl grammar exp =
+  let rec iter = function
+    | S.Epsilon -> FstSet.singleton Epsilon
+    | S.Symbol(S.Term c) -> FstSet.singleton (Term c)
+    | S.Symbol(S.Nont s) -> begin
+        match Hashtbl.find_opt tbl s with
+        | Some(set) -> set
+        | None ->
+          let rhss =
+            rev_filter_map
+              (fun (n, rhs) -> if n = s then Some(rhs) else None)
+              grammar
+          in
+          let set = List.fold_left (fun f r -> FstSet.union f (iter r)) FstSet.empty rhss in
+          Hashtbl.add tbl s set;
+          set
+      end
+    | S.Concat(a, b) ->
+      let aset = iter a in
+      if FstSet.mem Epsilon aset
+      then FstSet.union (FstSet.remove Epsilon aset) (iter b)
+      else aset
+    | S.Union(a, b) -> FstSet.union (iter a) (iter b)
+    | S.Option(a) -> FstSet.add Epsilon (iter a)
+  in
+  iter exp
+
 module Follow = struct
   type t = Eos | Term of Syntax.terminal
   let compare = compare
