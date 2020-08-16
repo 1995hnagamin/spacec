@@ -1,7 +1,12 @@
+open Printf
+
 let () =
   let filename = Sys.argv.(1) in
   let ic = open_in filename in
   let rules = Parser.main Lexer.main (Lexing.from_channel ic) in
-  List.iter
-    (fun (_, e) -> Printf.printf "%s\n" (Syntax.string_of_expr e))
-    rules
+  let main = fst (List.hd rules) in
+  let fset = Ling.first_set rules (Syntax.symbol_nont main) in
+  printf "first set of %s:\n" main;
+  Ling.FstSet.iter
+    (fun el -> printf "- %s\n" (Ling.Fse.string_of el))
+    fset

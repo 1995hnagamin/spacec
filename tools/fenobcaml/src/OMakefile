@@ -3,6 +3,7 @@ PROGRAM = fenobcaml
 FILES[] =
 	syntax
 	lexer
+	ling
 	parser
 	main
 
