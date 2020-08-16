@@ -26,7 +26,7 @@ jobs:
       run: |
         opam init --disable-sandboxing --verbose
         eval $(opam env)
-        for file in $(find . -name '*.ml'); do
+        for file in $(find . -name '*.{ml,mli}'); do
           ocp-indent -i $file
         done
         git diff --quiet
