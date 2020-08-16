@@ -76,3 +76,18 @@ module Follow = struct
 end
 
 module FollowSet = Set.Make(Follow)
+
+module StrSet = Set.Make(String)
+
+let nont_set grammar =
+  let rec register set = function
+    | S.Epsilon -> set
+    | S.Symbol(S.Term c) -> set
+    | S.Symbol(S.Nont s) -> StrSet.add s set
+    | S.Concat(a, b) -> register (register set a) b
+    | S.Union(a, b) -> register (register set a) b
+    | S.Option(a) -> register set a
+  in
+  List.fold_left
+    (fun set (nA, rhs) -> register (StrSet.add nA set) rhs)
+    StrSet.empty grammar
