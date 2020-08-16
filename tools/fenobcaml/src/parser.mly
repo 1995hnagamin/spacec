@@ -14,7 +14,7 @@ let split_str_literal str =
 %token <string> StrLit
 
 %start main
-%type <(Syntax.symbol * Syntax.expr) list> main
+%type <(Syntax.nonterminal * Syntax.expr) list> main
 %%
 
 main :
@@ -25,7 +25,7 @@ rule_list :
 | rule SEMICOLON rule_list { $1 :: $3 }
 
 rule :
-| ID COLONEQ exp { (Nont($1), $3) }
+| ID COLONEQ exp { ($1, $3) }
 
 exp :
 | factor { $1 }
