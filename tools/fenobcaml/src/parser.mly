@@ -28,6 +28,7 @@ rule :
 | ID COLONEQ exp { ($1, $3) }
 
 exp :
+| EPSILON { Epsilon }
 | factor { $1 }
 | factor PIPE exp { Union($1, $3 ) }
 

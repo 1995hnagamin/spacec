@@ -7,6 +7,7 @@ type symbol =
   | Nont of nonterminal
 
 type expr =
+  | Epsilon
   | Symbol of symbol
   | Concat of expr * expr
   | Union of expr * expr
@@ -20,6 +21,7 @@ let string_of_expr e =
   let buf = Buffer.create 100 in
   let emit = Buffer.add_string buf in
   let rec iter = function
+    | Epsilon -> emit "~"
     | Symbol(Term(c)) -> emit (Printf.sprintf "'%c'" c)
     | Symbol(Nont(s)) -> emit s
     | Concat(a, b) ->
