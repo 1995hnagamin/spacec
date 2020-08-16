@@ -1,4 +1,4 @@
-module Fse :
+module Fst :
 sig
   type t = Epsilon | Term of Syntax.terminal
   val compare : 'a -> 'a -> int
@@ -7,7 +7,7 @@ end
 
 module FstSet :
 sig
-  type elt = Fse.t
+  type elt = Fst.t
   type t
   val mem : elt -> t -> bool
   val iter : (elt -> unit) -> t -> unit

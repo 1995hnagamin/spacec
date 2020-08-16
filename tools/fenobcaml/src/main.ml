@@ -8,5 +8,5 @@ let () =
   let fset = Ling.first_set rules (Syntax.symbol_nont main) in
   printf "first set of %s:\n" main;
   Ling.FstSet.iter
-    (fun el -> printf "- %s\n" (Ling.Fse.string_of el))
+    (fun el -> printf "- %s\n" (Ling.Fst.string_of el))
     fset

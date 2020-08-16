@@ -2,7 +2,7 @@ module S = Syntax
 
 type grammar = (Syntax.nonterminal * Syntax.expr) list
 
-module Fse = struct
+module Fst = struct
   type t = Epsilon | Term of Syntax.terminal
   let compare = compare
   let string_of = function
@@ -18,7 +18,7 @@ let rev_filter_map f xs =
        | None -> ys)
     [] xs
 
-module FstSet = Set.Make(Fse)
+module FstSet = Set.Make(Fst)
 
 let first_set grammar exp =
   let rec iter = function
