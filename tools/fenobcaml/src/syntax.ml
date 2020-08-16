@@ -1,4 +1,4 @@
-type terminal = string
+type terminal = char
 
 type nonterminal = string
 
@@ -16,7 +16,7 @@ let string_of_expr e =
   let buf = Buffer.create 100 in
   let emit = Buffer.add_string buf in
   let rec iter = function
-    | Symbol(Term(s)) -> List.iter emit ["\""; s; "\""]
+    | Symbol(Term(c)) -> emit (Printf.sprintf "'%c'" c)
     | Symbol(Nont(s)) -> emit s
     | Concat(a, b) ->
       emit "("; iter a; emit " "; iter b; emit ")"
