@@ -1,10 +1,8 @@
-type first_set_elem = Epsilon | Term of Syntax.terminal
-
 module Fse :
 sig
-  type t = first_set_elem
+  type t = Epsilon | Term of Syntax.terminal
   val compare : 'a -> 'a -> int
-  val string_of : first_set_elem -> string
+  val string_of : t -> string
 end
 
 module FstSet :

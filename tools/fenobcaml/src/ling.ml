@@ -1,18 +1,12 @@
 module S = Syntax
 
-type first_set_elem = Epsilon | Term of Syntax.terminal
-
 module Fse = struct
-  type t = first_set_elem
-
+  type t = Epsilon | Term of Syntax.terminal
   let compare = compare
-
   let string_of = function
     | Epsilon -> "~"
     | Term(c) -> Printf.sprintf "'%c'" c
 end
-
-module FstSet = Set.Make(Fse)
 
 let rev_filter_map f xs =
   List.fold_left
@@ -21,6 +15,8 @@ let rev_filter_map f xs =
        | Some(y) -> y ::ys
        | None -> ys)
     [] xs
+
+module FstSet = Set.Make(Fse)
 
 let first_set grammar exp =
   let rec iter = function
