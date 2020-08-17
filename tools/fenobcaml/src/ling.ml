@@ -25,11 +25,14 @@ let first_set grammar exp =
     | S.Epsilon -> FstSet.singleton Epsilon
     | S.Symbol(S.Term c) -> FstSet.singleton (Term c)
     | S.Symbol(S.Nont s) ->
-      let rhss = rev_filter_map
-                   (fun (n, rhs) -> if n = s then Some(rhs) else None)
-                   grammar
+      let rhss =
+        rev_filter_map
+          (fun (n, rhs) -> if n = s then Some(rhs) else None)
+          grammar
       in
-      List.fold_left (fun f r -> FstSet.union f (iter r)) FstSet.empty rhss
+      List.fold_left
+        (fun f r -> FstSet.union f (iter r))
+        FstSet.empty rhss
     | S.Concat(a, b) ->
       let aset = iter a in
       if FstSet.mem Epsilon aset
@@ -53,7 +56,11 @@ let first_set_table tbl grammar exp =
               (fun (n, rhs) -> if n = s then Some(rhs) else None)
               grammar
           in
-          let set = List.fold_left (fun f r -> FstSet.union f (iter r)) FstSet.empty rhss in
+          let set =
+            List.fold_left
+              (fun f r -> FstSet.union f (iter r))
+              FstSet.empty rhss
+          in
           Hashtbl.add tbl s set;
           set
       end
@@ -79,17 +86,18 @@ module FollowSet = Set.Make(Follow)
 
 module StrSet = Set.Make(String)
 
+let rec add_nonterminal exp set =
+  match exp with
+  | S.Epsilon -> set
+  | S.Symbol(S.Term c) -> set
+  | S.Symbol(S.Nont s) -> StrSet.add s set
+  | S.Concat(a, b) -> add_nonterminal a (add_nonterminal b set)
+  | S.Union(a, b) -> add_nonterminal a (add_nonterminal b set)
+  | S.Option(a) -> add_nonterminal a set
+
 let nont_set grammar =
-  let rec register set = function
-    | S.Epsilon -> set
-    | S.Symbol(S.Term c) -> set
-    | S.Symbol(S.Nont s) -> StrSet.add s set
-    | S.Concat(a, b) -> register (register set a) b
-    | S.Union(a, b) -> register (register set a) b
-    | S.Option(a) -> register set a
-  in
   List.fold_left
-    (fun set (nA, rhs) -> register (StrSet.add nA set) rhs)
+    (fun set (nA, rhs) -> add_nonterminal rhs (StrSet.add nA set))
     StrSet.empty grammar
 
 let create_dep_graph grammar start =
@@ -102,6 +110,7 @@ let create_dep_graph grammar start =
         (if FstSet.mem Fst.Epsilon b1st then Hashtbl.add graph nA nB);
         iter beta
       | S.Concat(_, beta) -> iter beta
+      | S.Union(a, b) -> iter a; iter b
       | _ -> ()
     in
     iter rhs
